@@ -42,12 +42,22 @@ jobs:
       - name: Canonical не загубився
         run: grep -q '<link rel="canonical" href="https://orbita-ix.com/">' public/index.html
 
-      - name: Усі три кнопки ведуть у Telegram-бот із мітками джерела
+      - name: Кнопки CTA і перенос мітки джерела в бот
         run: |
-          for tag in hero dock contact; do
-            grep -q "https://t.me/ai_legal_practice_bot?start=$tag" public/index.html \
-              || { echo "missing CTA source label: $tag"; exit 1; }
+          # посилання на бот із міткою за замовчуванням
+          grep -q 'https://t.me/ai_legal_practice_bot?start=contact' public/index.html \
+            || { echo "missing bot link with default contact label"; exit 1; }
+          # цільове посилання, у яке підставляється мітка
+          grep -q 'id="tg-cta"' public/index.html \
+            || { echo "missing id=tg-cta on the bot link"; exit 1; }
+          # кнопки, що ведуть до блоку контактів, з міткою джерела
+          for tag in hero dock; do
+            grep -q "data-cta=\"$tag\"" public/index.html \
+              || { echo "missing data-cta source label: $tag"; exit 1; }
           done
+          # JS, який переносить мітку в посилання бота
+          grep -qF "ai_legal_practice_bot?start='" public/index.html \
+            || { echo "missing JS that carries the source label into the bot link"; exit 1; }
 
   # Публікація — лише з main, після зеленого check.
   deploy:
