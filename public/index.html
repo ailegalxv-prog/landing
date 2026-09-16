@@ -473,7 +473,7 @@
     <h1>Автоматизація юридичних бізнес-процесів</h1>
     <p class="lede">Прибираємо ручну роботу з практики, щоб час юриста йшов на справи — а не на нагадування, таблиці й пошук документів.</p>
     <div class="actions">
-      <a class="btn" href="https://t.me/ai_legal_practice_bot?start=hero" target="_blank" rel="noopener noreferrer">Безкоштовний розбір процесів</a>
+      <a class="btn" href="#next" data-cta="hero">Безкоштовний розбір процесів</a>
       <a class="btn-ghost" href="#how">Як це відбувається</a>
     </div>
 
@@ -950,7 +950,7 @@
     <h2>Домовимось про розбір</h2>
     <p class="lead">Година розмови — і ви побачите свою практику в цифрах: скільки годин на місяць забирає ручна робота і що з цього можна прибрати першим. Безкоштовно й ні до чого не зобовʼязує.</p>
     <div class="cta-card">
-      <a class="btn btn-lg" href="https://t.me/ai_legal_practice_bot?start=contact" target="_blank" rel="noopener noreferrer">Записатись на розбір у Telegram</a>
+      <a class="btn btn-lg" id="tg-cta" href="https://t.me/ai_legal_practice_bot?start=contact" target="_blank" rel="noopener noreferrer">Записатись на розбір у Telegram</a>
       <ol class="cta-steps">
         <li><b>Два дотики екрана.</b> Бот запитає, як до вас звертатись, і номер — ділитись контактом можна однією кнопкою, вручну набирати нічого не треба.</li>
         <li><b>За бажанням</b> — одним рядком, що саме хочеться прибрати з рутини. Можна пропустити.</li>
@@ -976,7 +976,7 @@
 
 <div class="dock" id="dock" aria-hidden="true">
   <p class="dock-t">Перша година — безкоштовно</p>
-  <a class="dock-b" href="https://t.me/ai_legal_practice_bot?start=dock" target="_blank" rel="noopener noreferrer" tabindex="-1">Записатись на розбір</a>
+  <a class="dock-b" href="#next" data-cta="dock" tabindex="-1">Записатись на розбір</a>
 </div>
 
 <div class="wrap">
@@ -1271,6 +1271,25 @@
     new IntersectionObserver(function (es) { atContact = es[0].isIntersecting; sync(); },
       { threshold: 0 }).observe(next);
   }
+
+  // Кнопки «розбір»: ведуть до блоку контактів, де людина сама вибирає канал
+  // (Telegram, телефон, пошта) — юрист із робочого комп'ютера, де Telegram
+  // недоступний, не втрачається. Мітка джерела переноситься в посилання бота,
+  // тому видно, яка кнопка привела людину: hero, dock або contact.
+  // Без JS кнопка все одно прокрутить до контактів — href="#next".
+  var tgCta = document.getElementById('tg-cta');
+  document.querySelectorAll('[data-cta]').forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      if (tgCta) {
+        tgCta.href = 'https://t.me/ai_legal_practice_bot?start='
+                   + b.getAttribute('data-cta');
+      }
+      if (next) {
+        e.preventDefault();
+        next.scrollIntoView({ behavior: slow ? 'auto' : 'smooth', block: 'start' });
+      }
+    });
+  });
 
   // Карусель відгуків: стрілки гортають на ширину картки
   var revs = document.getElementById('revs');
