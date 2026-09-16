@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Автоматизація юридичних бізнес-процесів</title>
+<meta name="description" content="Прибираємо ручну роботу з юридичної практики: строки, документи, звернення, облік часу й рахунки. Перша година розбору процесів — безкоштовно.">
+<link rel="canonical" href="https://orbita-ix.com/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0A1725">
+<meta name="color-scheme" content="light only">
+<meta name="format-detection" content="telephone=no">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="uk_UA">
+<meta property="og:url" content="https://orbita-ix.com/">
+<meta property="og:title" content="Автоматизація юридичних бізнес-процесів">
+<meta property="og:description" content="Час юриста — на справи, а не на нагадування, таблиці й пошук документів. Перша година розбору — безкоштовно.">
+<meta property="og:image" content="https://orbita-ix.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+  /* Базовий reset, який раніше давала обгортка артефакту */
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden]:not([hidden=until-found]) { display: none !important; }
+</style>
+<style>
+  /* Сторінка навмисно має ОДИН вигляд — світлий, теплий папір.
+     Комерційна сторінка для клієнтів не повинна ставати темною лише тому,
+     що в телефоні ввімкнена темна тема. Тому темних варіантів тут немає,
+     а color-scheme нижче забороняє браузеру самому інвертувати кольори. */
+  :root, :root[data-theme="dark"], :root[data-theme="light"] {
+    color-scheme: light only;
+    --paper:#FFFDF8; --tint:#F6F2E9; --card:#FFFFFF; --rule:#E4DCCB; --rule-2:#F0EADE;
+    --ink:#0F1A2A; --ink-2:#545D6B; --ink-3:#8A8578;
+    --navy:#0A1725; --navy-2:#0E1F31; --on-navy:#EDF2F9; --on-navy-2:#94A6BE;
+    --grid:rgba(160,195,245,.10); --hair:rgba(160,195,245,.18);
+    --accent:#0E4B8C; --accent-wash:#F2E9D8;
+    --brass:#8A6A22; --brass-solid:#B08A34; --on-brass:#12100A;
+    --serif: Georgia, 'Iowan Old Style', Charter, 'Times New Roman', serif;
+    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 16.5px; line-height: 1.65;
+    margin: 0; padding: 0; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Обкладинка ────────────────────────────────────── */
+  .hero {
+    background:
+      repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 28px),
+      var(--navy);
+    color: var(--on-navy); padding: 88px 0 76px;
+  }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--brass); margin: 0 0 20px; }
+  .hero .eyebrow { color: var(--brass-solid); }
+  .rule-sm { width: 54px; height: 1px; background: var(--brass-solid); margin: 0 0 26px; }
+  .hero h1 {
+    font-family: var(--serif); font-weight: 400; color: var(--on-navy);
+    font-size: clamp(37px,6.6vw,66px); line-height: 1.05; letter-spacing: -.022em;
+    margin: 0 0 24px; max-width: 15ch; text-wrap: balance;
+  }
+  .hero .lede { font-size: clamp(17.5px,2.3vw,21px); color: var(--on-navy-2); margin: 0 0 36px; max-width: 46ch; text-wrap: pretty; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+  .btn { display: inline-block; background: var(--brass-solid); color: var(--on-brass); font-weight: 660; font-size: 16px; padding: 15px 30px; text-decoration: none; }
+  .btn-ghost { display: inline-block; color: var(--on-navy); border: 1px solid var(--hair); padding: 14px 26px; text-decoration: none; font-weight: 560; }
+
+  /* ── Схема потоку ──────────────────────────────────── */
+  .flow { margin-top: 54px; border-top: 1px solid var(--hair); padding-top: 30px; }
+  .flow-cap { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--on-navy-2); margin: 0 0 18px; }
+  /* Дві схеми — той самий зміст, різна вісь. Горизонтальна на вузькому екрані
+     стискалась до нечитабельного й вимагала гортання, тому там окрема
+     вертикальна розкладка з більшими підписами. */
+  .flow svg { width: 100%; height: auto; overflow: visible; }
+  /* Специфічність тримаємо однаковою (.flow svg.клас), інакше правило вище
+     перебиває приховування і показуються обидві схеми одночасно. */
+  .flow svg.flow-h { display: block; }
+  .flow svg.flow-v { display: none; max-width: 340px; }
+  .flab-v { font-family: var(--sans); font-size: 15px; fill: var(--on-navy); }
+  @media (max-width: 660px) {
+    .flow svg.flow-h { display: none; }
+    .flow svg.flow-v { display: block; }
+  }
+
+  /* ── Міні-ролик: документи → база → пошук → документ ── */
+  .film-wrap { display: grid; gap: 14px; }
+  .film { position: relative; overflow: hidden; border: 1px solid var(--rule);
+          padding: 18px 16px 20px; display: flex; flex-direction: column;
+          align-items: center; gap: 16px; min-height: 430px;
+          background:
+            repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 30px),
+            repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 30px),
+            var(--navy); }
+
+  /* Летючі документи */
+  .fly { position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none; z-index: 1; }
+  .fly.sheet { width: 26px; height: 34px; background: #EDF2F9; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+  .fly.sheet i { display: block; height: 2px; background: rgba(10,23,37,.22); margin: 5px 4px 0; }
+  .fly.sheet i:nth-child(2) { width: 62%; }
+  .fly.sheet::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+                       width: 2px; background: var(--brass-solid); }
+  .fly.folder { width: 34px; height: 26px; background: #C9A254; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+  .fly.folder::before { content: ""; position: absolute; left: 0; top: -5px; width: 15px;
+                        height: 5px; background: #C9A254; }
+  .fly.folder::after { content: ""; position: absolute; left: 4px; right: 4px; top: 6px;
+                       height: 2px; background: rgba(21,18,10,.28); box-shadow: 0 5px 0 rgba(21,18,10,.18); }
+
+  /* База */
+  .db { position: relative; width: 118px; height: 132px; opacity: .4; flex: none;
+        transition: opacity .5s ease, transform .5s ease; transform: scale(.9); }
+  .db.on { opacity: 1; transform: scale(1); }
+  .db-side { position: absolute; left: 0; right: 0; top: 17px; bottom: 17px;
+             border-left: 1px solid var(--brass-solid); border-right: 1px solid var(--brass-solid); }
+  .db-cap { position: absolute; left: 0; right: 0; height: 34px;
+            border: 1px solid var(--brass-solid); border-radius: 50%; }
+  .db-cap.t { top: 0; background: var(--navy); z-index: 3; }
+  .db-cap.b { bottom: 0; }
+  .db-fill { position: absolute; left: 1px; right: 1px; bottom: 17px; height: 0; z-index: 2;
+             background: rgba(176,138,52,.32); transition: height .35s ease; }
+  .db.hit-pulse { animation: dbPulse .3s ease; }
+  @keyframes dbPulse { 50% { transform: scale(1.045) } }
+  .db-lab { position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+            margin-top: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+            text-transform: uppercase; color: var(--on-navy-2); white-space: nowrap; }
+
+  /* Пошук */
+  .film-search { width: min(88%, 430px); background: rgba(237,242,249,.07);
+                 border: 1px solid var(--hair); padding: 11px 14px; flex: none;
+                 font-family: var(--mono); font-size: 13.5px; color: var(--on-navy);
+                 opacity: 0; transform: translateY(-8px); transition: opacity .35s ease, transform .35s ease;
+                 display: flex; align-items: center; gap: 9px; min-height: 42px; }
+  .film-search.on { opacity: 1; transform: none; }
+  .film-search .mag { color: var(--brass-solid); }
+  .film-search .car { display: none; width: 7px; height: 15px; background: var(--brass-solid);
+                      margin-left: 2px; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0 } }
+
+  /* Знахідки — власна зона, нижче бази */
+  .hits { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+          min-height: 32px; margin-top: 22px; width: 100%; }
+  .hit { background: rgba(237,242,249,.09); border: 1px solid var(--hair);
+         border-left: 2px solid var(--brass-solid); padding: 7px 10px;
+         font-family: var(--mono); font-size: 11.5px; color: var(--on-navy);
+         opacity: 0; transform: translateY(-20px) scale(.9);
+         transition: opacity .4s ease, transform .5s cubic-bezier(.3,1.3,.5,1); }
+  .hit.on { opacity: 1; transform: none; }
+
+  /* Готовий документ — окрема зона в самому низу */
+  .final { width: min(90%, 400px); background: var(--paper); color: var(--ink);
+           padding: 13px 15px; opacity: 0; transform: translateY(12px) scale(.96);
+           transition: opacity .45s ease, transform .55s cubic-bezier(.3,1.2,.5,1);
+           display: grid; grid-template-columns: auto 1fr; gap: 13px; align-items: center;
+           min-height: 60px; margin-top: auto; }
+  .final.on { opacity: 1; transform: none; }
+  .final .ic { width: 24px; height: 32px; background: var(--brass-solid); }
+  .final b { display: block; font-size: 14.5px; }
+  .final span { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); margin-top: 2px; }
+
+  .film-cap { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; min-height: 24px; }
+  .film-cap b { font-family: var(--serif); font-size: 18px; }
+  .film-cap span { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--ink-3); }
+  .demo-run { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; }
+  .demo-btn { background: var(--brass-solid); color: var(--on-brass); border: none;
+              font-family: var(--sans); font-weight: 660; font-size: 15.5px;
+              padding: 13px 26px; cursor: pointer; }
+  .demo-btn:disabled { opacity: .55; cursor: default; }
+  @media (max-width: 560px) { .demo-btn { width: 100%; } .film { min-height: 470px; } }
+
+  /* ── Калькулятор ───────────────────────────────────── */
+  .calc { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  @media (min-width: 780px) { .calc { grid-template-columns: 1.1fr 1fr; } }
+  .calc-in { background: var(--card); padding: 28px 26px; display: grid; gap: 20px; align-content: start; }
+  .field { display: grid; gap: 7px; }
+  .field label { font-size: 14.5px; color: var(--ink-2); }
+  .field .row { display: flex; align-items: center; gap: 10px; }
+  .field input[type=number] { flex: 1; min-width: 0; font-family: var(--mono); font-size: 17px;
+        padding: 11px 13px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+  .field .unit { font-family: var(--mono); font-size: 13px; color: var(--ink-3); white-space: nowrap; }
+  .field input[type=range] { width: 100%; accent-color: var(--brass-solid); }
+  .field .rv-val { font-family: var(--mono); font-size: 13px; color: var(--brass); }
+  .calc-out { background: var(--navy); color: var(--on-navy); padding: 28px 26px;
+              display: grid; gap: 18px; align-content: start; }
+  .calc-out .lab { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em;
+                   text-transform: uppercase; color: var(--brass-solid); margin: 0; }
+  .calc-big { font-family: var(--serif); font-size: clamp(34px,6vw,46px); line-height: 1;
+              margin: 0; color: var(--on-navy); font-variant-numeric: tabular-nums; }
+  .calc-row { display: flex; justify-content: space-between; gap: 14px; align-items: baseline;
+              border-top: 1px solid var(--hair); padding-top: 12px; font-size: 14.5px; color: var(--on-navy-2); }
+  .calc-row b { font-family: var(--mono); font-size: 16px; color: var(--on-navy);
+                font-variant-numeric: tabular-nums; }
+  .calc-note { font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em;
+               color: var(--on-navy-2); margin: 0; line-height: 1.5; }
+
+  /* ── Терези: куди йде час юриста ───────────────────── */
+  .scales { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 40px; align-items: center; }
+  @media (max-width: 720px) { .scales { grid-template-columns: 1fr; gap: 26px; } }
+  .scales svg { width: 100%; max-width: 420px; height: auto; display: block; overflow: visible; }
+  .sc-line { stroke: var(--ink-3); stroke-width: 2; fill: none; stroke-linecap: round; }
+  .sc-pan { stroke: var(--brass-solid); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+  .sc-fill { fill: var(--brass-solid); }
+  .sc-fill.muted { fill: var(--ink-3); opacity: .45; }
+  .sc-lab { font-family: var(--sans); font-size: 13px; fill: var(--ink-2); }
+  .beam, .pan-l, .pan-r { transform-box: view-box; }
+  .beam { transform-origin: 180px 54px; animation: tip 6s ease-in-out infinite alternate; }
+  @keyframes tip { from { transform: rotate(-7deg) } to { transform: rotate(7deg) } }
+  .pan-l { animation: panl 6s ease-in-out infinite alternate; }
+  @keyframes panl { from { transform: translateY(15px) } to { transform: translateY(-15px) } }
+  .pan-r { animation: panr 6s ease-in-out infinite alternate; }
+  @keyframes panr { from { transform: translateY(-15px) } to { transform: translateY(15px) } }
+
+  /* Смуги на всю ширину — щоб сторінка не була суцільно білою після шапки */
+  .band { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .band.tint { background: var(--tint); }
+  .band section { border-bottom: none; }
+  /* Смуга «Ризик на нашому боці» — світла, з латунною рискою замість темної заливки */
+  .band.warm { background: var(--paper); border-color: var(--brass-solid); }
+
+  .gains { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+  .gain { display: grid; grid-template-columns: 1fr auto; gap: 10px 20px; align-items: baseline; padding: 15px 0; border-bottom: 1px solid var(--rule-2); }
+  .gain b { font-weight: 620; font-size: 15.5px; }
+  .gain .t { font-family: var(--mono); font-size: 14px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .gain .t s { color: var(--ink-3); text-decoration-thickness: 1px; }
+  .gain .t i { font-style: normal; color: var(--brass); font-weight: 700; }
+
+  /* ── Продукти ──────────────────────────────────────── */
+  .prod { background: var(--card); padding: 32px 34px; display: grid; grid-template-columns: 1fr; gap: 18px; }
+  .prod .live { display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--brass); }
+  .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--brass-solid); animation: beat 2.4s ease-in-out infinite; }
+  @keyframes beat { 0%,100% { opacity:.3; transform: scale(.85) } 50% { opacity:1; transform: scale(1) } }
+  .prod h3 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin: 0; }
+  .prod p { margin: 0; color: var(--ink-2); max-width: 62ch; }
+  .prod-figs { display: flex; flex-wrap: wrap; gap: 10px 34px; padding-top: 6px; }
+  .prod-figs div { font-size: 14px; color: var(--ink-2); }
+  .prod-figs b { font-family: var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+  @media (max-width: 560px) { .prod { padding: 24px 22px; } }
+  .fnode { fill: none; stroke: var(--hair); stroke-width: 1; }
+  .flab { font-family: var(--sans); font-size: 11px; fill: var(--on-navy-2); }
+  .fline { stroke: var(--hair); stroke-width: 1.5; fill: none; }
+  .fdash { stroke: var(--brass-solid); stroke-width: 1.5; fill: none; stroke-dasharray: 5 9; animation: flow 1.6s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -14; } }
+  .fdot { fill: var(--brass-solid); }
+  .fpulse { animation: pulse 3.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity:.25 } 50% { opacity:1 } }
+
+  /* ── Смуга цифр ────────────────────────────────────── */
+  .stats { background: var(--tint); border-top: 1px solid var(--brass-solid); }
+  .stats-in { display: grid; grid-template-columns: repeat(auto-fit,minmax(158px,1fr)); gap: 1px; background: var(--rule); }
+  .stat { background: var(--paper); padding: 30px 18px; text-align: center; }
+  .stat b { display: block; font-family: var(--serif); font-size: clamp(30px,4.6vw,42px); line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat span { display: block; font-size: 13.5px; color: var(--ink-2); margin-top: 9px; }
+  .stats-cap { font-family: var(--mono); font-size: 11px; color: var(--ink-3); text-align: center; padding: 18px 20px 24px; margin: 0; }
+
+  .trust { border-bottom: 1px solid var(--rule); background: var(--tint); }
+  .trust-in { display: flex; flex-wrap: wrap; gap: 12px 40px; padding: 20px 0; font-size: 14.5px; color: var(--ink-2); }
+  .trust-in span::before { content: "—"; color: var(--brass); margin-right: 9px; }
+
+  section { padding: 66px 0; border-bottom: 1px solid var(--rule-2); }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(27px,3.8vw,38px); line-height: 1.15; letter-spacing: -.015em; margin: 0 0 16px; text-wrap: balance; }
+  h3 { font-size: 16px; font-weight: 660; margin: 0 0 8px; }
+  p { margin: 0 0 16px; text-wrap: pretty; }
+  .lead { font-size: 18px; color: var(--ink-2); margin-bottom: 34px; max-width: 56ch; }
+
+  .pains { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 34px 44px; }
+  .pain h3 { font-family: var(--serif); font-weight: 400; font-size: 20px; letter-spacing: -.01em; }
+  .pain p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
+
+  .steps { border-left: 1px solid var(--rule); padding-left: 32px; display: grid; gap: 40px; }
+  .step { position: relative; }
+  .step::before { content: ""; position: absolute; left: -37px; top: 10px; width: 11px; height: 11px; background: var(--brass-solid); border-radius: 50%; box-shadow: 0 0 0 4px var(--paper); }
+  .step-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+  .step-head h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin: 0; letter-spacing: -.01em; }
+  .chip { font-family: var(--mono); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; padding: 4px 10px; background: var(--accent-wash); color: var(--ink); }
+  .chip.free { background: var(--brass-solid); color: var(--on-brass); font-weight: 660; }
+  .step p { margin: 0; color: var(--ink-2); font-size: 15.5px; max-width: 62ch; }
+
+  .cat { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 36px 44px; }
+  .cat-col h3 { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--brass); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .cat-col ul { margin: 0; padding: 0; list-style: none; }
+  .cat-col li { margin-bottom: 15px; font-size: 15px; color: var(--ink-2); }
+  .cat-col li b { display: block; color: var(--ink); font-weight: 620; margin-bottom: 2px; }
+
+  .guar { background: var(--tint); border-left: 3px solid var(--brass-solid); padding: 34px 36px; }
+  .guar h3 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin-bottom: 12px; }
+  .guar p { color: var(--ink-2); max-width: 60ch; }
+  .guar p:last-child { margin-bottom: 0; }
+
+  .pricing { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 18px; }
+  @media (min-width: 760px) { .pricing { grid-template-columns: 1.25fr 1fr; } }
+  .pricing-main { background: var(--card); padding: 30px 28px; }
+  .pricing-main h3 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin: 0 0 12px; letter-spacing: -.01em; }
+  .pricing-main p { color: var(--ink-2); font-size: 15.5px; margin: 0 0 18px; max-width: 46ch; }
+  .pricing-dep { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+  .pricing-dep li { font-size: 14.5px; color: var(--ink-2); padding-left: 18px; position: relative; }
+  .pricing-dep li::before { content: ""; position: absolute; left: 0; top: 9px; width: 7px; height: 1px; background: var(--brass-solid); }
+  .pricing-side { background: var(--tint); padding: 30px 26px; display: grid; gap: 16px; align-content: start; }
+  .scope b { display: block; font-size: 15.5px; font-weight: 620; margin-bottom: 2px; }
+  .scope span { display: block; font-size: 14px; color: var(--ink-2); }
+  .packs { display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 18px; }
+  .pack { background: var(--card); padding: 30px 24px; display: flex; flex-direction: column; }
+  .pack.mid { background: var(--accent-wash); }
+  .pick { font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--brass); margin: 0 0 12px; }
+  .pack h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin-bottom: 12px; letter-spacing: -.01em; }
+  .pack .who-t { font-size: 14.5px; color: var(--ink-2); margin-bottom: 22px; flex-grow: 1; }
+  .pack .price { font-family: var(--serif); font-size: 28px; color: var(--ink); margin: 0; letter-spacing: -.01em; }
+  .pack .term { font-size: 13px; color: var(--ink-3); margin: 6px 0 0; }
+  .price sup { font-size: 13px; color: var(--ink-3); }
+  .star { font-size: 13.5px; color: var(--ink-3); margin: 0 0 24px; }
+
+  .scroll { overflow-x: auto; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 430px; }
+  th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); font-weight: 660; padding: 0 16px 11px 0; border-bottom: 1px solid var(--ink); white-space: nowrap; }
+  td { padding: 13px 16px 13px 0; border-bottom: 1px solid var(--rule-2); vertical-align: top; }
+  td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.pr { font-weight: 660; }
+  caption { caption-side: bottom; text-align: left; font-size: 13px; color: var(--ink-3); padding-top: 12px; }
+
+  .note { background: var(--tint); padding: 24px 26px; }
+  .note p:last-child { margin-bottom: 0; }
+  .note-t { font-weight: 660; margin: 0 0 8px; }
+
+  .split { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 30px 44px; }
+  .split h3 { font-family: var(--serif); font-weight: 400; font-size: 19px; }
+  .split p { margin: 0; font-size: 15.5px; color: var(--ink-2); }
+
+  .contact {
+    background:
+      repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 28px),
+      var(--navy);
+    color: var(--on-navy); padding: 72px 0 78px; border-top: 1px solid var(--brass-solid);
+  }
+  .contact h2 { color: var(--on-navy); }
+  .contact .lead { color: var(--on-navy-2); }
+  /* Один шлях замість трьох: телефон і пошта прибрані навмисно —
+     вибір із трьох способів звʼязку зменшує кількість звернень. */
+  .cta-card { background: var(--navy-2); border: 1px solid var(--hair); padding: 32px 30px; display: grid; gap: 24px; justify-items: start; max-width: 620px; }
+  .btn-lg { font-size: 17px; padding: 17px 34px; }
+  .cta-steps { margin: 0; padding-left: 22px; display: grid; gap: 11px; font-size: 15px; color: var(--on-navy-2); }
+  .cta-steps li::marker { color: var(--brass-solid); font-family: var(--mono); font-size: 12.5px; }
+  .cta-steps b { color: var(--on-navy); font-weight: 620; }
+  @media (max-width: 560px) { .cta-card { padding: 24px 20px; } .btn-lg { width: 100%; text-align: center; } }
+
+  /* Другий рівень: телефон і пошта. Telegram лишається головною дією,
+     але відсутність телефона на сторінці підриває довіру — тому вони тут. */
+  .alt-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--on-navy-2); margin: 34px 0 14px; }
+  .alt-ways { display: grid; grid-template-columns: repeat(auto-fit,minmax(238px,1fr)); gap: 1px; background: var(--hair); border: 1px solid var(--hair); }
+  .alt { background: var(--navy); padding: 24px 22px; }
+  .alt .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--brass-solid); margin: 0 0 10px; }
+  .alt b { display: block; font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--on-navy); margin-bottom: 9px; }
+  .alt b a { color: var(--on-navy); text-decoration: none; border-bottom: 1px solid var(--brass-solid); }
+  .alt b.mail { font-size: 17px; }
+  .alt b.mail a { word-break: break-all; }
+  .alt p { margin: 0; font-size: 14.5px; color: var(--on-navy-2); }
+  .contact-foot { margin: 30px 0 0; font-size: 14.5px; color: var(--on-navy-2); }
+
+  /* ── Відгуки ──────────────────────────────────────── */
+  .revs-sum { display: flex; flex-wrap: wrap; gap: 14px 44px; margin: 0 0 30px;
+              padding-bottom: 26px; border-bottom: 1px solid var(--rule); }
+  .revs-sum div { display: flex; align-items: baseline; gap: 10px; }
+  .revs-sum b { font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--ink);
+                font-variant-numeric: tabular-nums; }
+  .revs-sum span { font-size: 13.5px; color: var(--ink-2); max-width: 20ch; }
+  .revs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(290px, 340px); align-items: start;
+          gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
+          padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+  .tg { scroll-snap-align: start; background: #E7EBF0; border: 1px solid var(--rule);
+        display: grid; align-content: start; overflow: hidden; }
+  .tg-bar { background: #FFFFFF; border-bottom: 1px solid #D8DEE6; padding: 12px 14px;
+            display: grid; grid-template-columns: auto 1fr; gap: 11px; align-items: center; }
+  .tg-av { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+           color: #fff; font-weight: 620; font-size: 16px; }
+  .tg-id b { display: block; font-size: 14.5px; font-weight: 620; color: #10161F; line-height: 1.25; }
+  .tg-id span { display: block; font-size: 12.5px; color: #6B7683; line-height: 1.3; }
+  .tg-chat { padding: 14px 12px 16px; display: grid; gap: 8px; justify-items: start;
+             background-image: radial-gradient(circle at 20% 30%, rgba(120,150,190,.10) 0 2px, transparent 2px),
+                               radial-gradient(circle at 70% 75%, rgba(120,150,190,.08) 0 2px, transparent 2px);
+             background-size: 90px 90px; }
+  .tg-msg { background: #FFFFFF; border-radius: 12px 12px 12px 4px; padding: 10px 12px 8px;
+            font-size: 14.5px; line-height: 1.5; color: #10161F; max-width: 100%;
+            box-shadow: 0 1px 1px rgba(16,22,31,.09); position: relative; }
+  .tg-msg + .tg-msg { border-radius: 12px; }
+  .tg-res { color: #1B6E4B; font-weight: 660; }
+  .tg-meta { float: right; margin: 6px 0 0 10px; font-size: 11px; color: #8A949F;
+             display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+  .tg-tick { color: #3E90D8; letter-spacing: -3px; font-size: 12px; }
+  .revs-nav { display: flex; gap: 8px; margin-top: 20px; }
+  .rev-btn { font-family: var(--mono); font-size: 16px; background: transparent;
+             border: 1px solid var(--rule); color: var(--ink-2); width: 44px; height: 44px; cursor: pointer; }
+  .rev-btn:hover { border-color: var(--brass-solid); color: var(--ink); }
+  @media (max-width: 660px) {
+    .revs { grid-auto-columns: 86%; }
+    .revs-nav { display: none; }
+    .revs-sum { gap: 12px 26px; }
+    .revs-sum b { font-size: 25px; }
+  }
+
+  /* Плаваюча кнопка запису. Зʼявляється після шапки (там кнопка вже є)
+     і зникає на блоці контактів (там людина вже дійшла). */
+  .dock {
+    position: fixed; z-index: 40;
+    background: var(--navy-2); border: 1px solid var(--brass-solid);
+    display: grid; gap: 10px;
+    opacity: 0; pointer-events: none; transform: translateY(14px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .dock.in { opacity: 1; pointer-events: auto; transform: none; }
+  .dock-t { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--brass-solid); margin: 0; }
+  .dock-b { display: block; background: var(--brass-solid); color: var(--on-brass); text-align: center; font-weight: 660; font-size: 15.5px; padding: 13px 24px; text-decoration: none; }
+  /* Десктоп — компактна картка в кутку, щоб не заважала читати */
+  @media (min-width: 661px) {
+    .dock { right: 24px; bottom: 24px; width: 286px; padding: 18px; }
+  }
+  /* Телефон — смуга на всю ширину, під великим пальцем */
+  @media (max-width: 660px) {
+    .dock { left: 0; right: 0; bottom: 0; border-left: none; border-right: none; border-bottom: none;
+            padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
+    .dock-t { text-align: center; }
+  }
+
+  footer.bot { padding: 26px 0 44px; font-size: 13.5px; color: var(--ink-3); }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--brass-solid); outline-offset: 3px; }
+
+  /* ── Поява при прокручуванні ───────────────────────── */
+  .rv { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  .rv.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rv { opacity: 1; transform: none; transition: none; }
+    .fdash, .fpulse, .dot-live { animation: none; }
+    .demo-out { animation: none; }
+    .demo-fill { transition: none; }
+    .beam, .pan-l, .pan-r { animation: none; }
+    .dock { transition: none; }
+    .beam { transform: rotate(-4deg); }
+    .pan-l { transform: translateY(9px); }
+    .pan-r { transform: translateY(-9px); }
+  }
+  /* ── Вузькі екрани: без горизонтального гортання ──────
+     Колонки сітки за замовчуванням не стискаються вужче за вміст
+     (поле введення має «природну» ширину), тому явно дозволяємо їм
+     стискатися; на найвужчих телефонах час переноситься під назву. */
+  @media (max-width: 779px) {
+    .calc, .calc-in, .field { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 720px) { .scales { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 380px) { .gain { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+  @media (max-width: 560px) {
+    .hero { padding: 62px 0 54px; }
+    .guar { padding: 26px 22px; }
+    .flow { margin-top: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Послуги для юридичної практики</p>
+    <div class="rule-sm"></div>
+    <h1>Автоматизація юридичних бізнес-процесів</h1>
+    <p class="lede">Прибираємо ручну роботу з практики, щоб час юриста йшов на справи — а не на нагадування, таблиці й пошук документів.</p>
+    <div class="actions">
+      <a class="btn" href="https://t.me/ai_legal_practice_bot?start=hero" target="_blank" rel="noopener noreferrer">Безкоштовний розбір процесів</a>
+      <a class="btn-ghost" href="#how">Як це відбувається</a>
+    </div>
+
+    <div class="flow">
+      <p class="flow-cap">Так виглядає автоматизований контур</p>
+      <svg viewBox="0 0 720 76" class="flow-h" role="img" aria-label="Схема: звернення стає карткою клієнта, далі документом, далі рахунком">
+        <g class="fnode">
+          <rect x="2"   y="26" width="132" height="44"/>
+          <rect x="196" y="26" width="132" height="44"/>
+          <rect x="390" y="26" width="132" height="44"/>
+          <rect x="584" y="26" width="134" height="44"/>
+        </g>
+        <g class="flab" text-anchor="middle">
+          <text x="68"  y="53">Звернення</text>
+          <text x="262" y="53">Картка клієнта</text>
+          <text x="456" y="53">Документ</text>
+          <text x="651" y="53">Рахунок</text>
+        </g>
+        <g>
+          <line class="fline" x1="134" y1="48" x2="196" y2="48"/>
+          <line class="fdash" x1="134" y1="48" x2="196" y2="48"/>
+          <line class="fline" x1="328" y1="48" x2="390" y2="48"/>
+          <line class="fdash" x1="328" y1="48" x2="390" y2="48"/>
+          <line class="fline" x1="522" y1="48" x2="584" y2="48"/>
+          <line class="fdash" x1="522" y1="48" x2="584" y2="48"/>
+        </g>
+        <g class="fdot">
+          <circle class="fpulse" cx="165" cy="48" r="3"/>
+          <circle class="fpulse" cx="359" cy="48" r="3" style="animation-delay:.9s"/>
+          <circle class="fpulse" cx="553" cy="48" r="3" style="animation-delay:1.8s"/>
+        </g>
+      </svg>
+
+      <svg viewBox="0 0 320 430" class="flow-v" role="img" aria-label="Схема: звернення стає карткою клієнта, далі документом, далі рахунком">
+        <g class="fnode">
+          <rect x="1" y="1"   width="318" height="60"/>
+          <rect x="1" y="123" width="318" height="60"/>
+          <rect x="1" y="245" width="318" height="60"/>
+          <rect x="1" y="367" width="318" height="60"/>
+        </g>
+        <g class="flab-v" text-anchor="middle">
+          <text x="160" y="37">Звернення</text>
+          <text x="160" y="159">Картка клієнта</text>
+          <text x="160" y="281">Документ</text>
+          <text x="160" y="403">Рахунок</text>
+        </g>
+        <g>
+          <line class="fline" x1="160" y1="61"  x2="160" y2="123"/>
+          <line class="fdash" x1="160" y1="61"  x2="160" y2="123"/>
+          <line class="fline" x1="160" y1="183" x2="160" y2="245"/>
+          <line class="fdash" x1="160" y1="183" x2="160" y2="245"/>
+          <line class="fline" x1="160" y1="305" x2="160" y2="367"/>
+          <line class="fdash" x1="160" y1="305" x2="160" y2="367"/>
+        </g>
+        <g class="fdot">
+          <circle class="fpulse" cx="160" cy="92"  r="3.5"/>
+          <circle class="fpulse" cx="160" cy="214" r="3.5" style="animation-delay:.9s"/>
+          <circle class="fpulse" cx="160" cy="336" r="3.5" style="animation-delay:1.8s"/>
+        </g>
+      </svg>
+
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="wrap" style="padding:0 24px">
+    <div class="stats-in">
+      <div class="stat"><b data-to="27" data-suffix=" млн">0</b><span>документів обробляють наші автоматизації</span></div>
+      <div class="stat"><b data-to="136" data-suffix=" млн">0</b><span>записів у базах, які ми побудували</span></div>
+      <div class="stat"><b data-to="0" data-suffix="" data-static="24/7">0</b><span>процеси працюють без участі людини</span></div>
+      <div class="stat"><b data-to="1" data-suffix=" год">0</b><span>і у вас на руках розрахунок по вашій компанії</span></div>
+    </div>
+    <p class="stats-cap">Цифри з наших діючих систем</p>
+  </div>
+</div>
+
+<div class="trust">
+  <div class="wrap">
+    <div class="trust-in">
+      <span>Перша година — безкоштовно</span>
+      <span>Розрахунок лишається у вас</span>
+      <span>Нерозголошення до початку робіт</span>
+      <span>Усе оформлюється на вашу компанію</span>
+    </div>
+  </div>
+</div>
+
+<div class="band tint">
+  <div class="wrap">
+  <section class="rv">
+    <h2>Ваші документи стають базою, яка працює</h2>
+    <p class="lead">Договори, акти й заяви, що вже накопичились у компанії, зводяться в одну базу. Далі потрібне формулювання знаходиться за секунди — і новий документ збирається з ваших же напрацювань.</p>
+    <div class="film-wrap">
+      <div class="film" id="film">
+        <div class="film-search" id="filmSearch"><span class="mag">&#9906;</span><span id="filmQuery"></span><span class="car" id="filmCar"></span></div>
+        <div class="db" id="filmDb">
+          <div class="db-cap b"></div>
+          <div class="db-side"></div>
+          <div class="db-fill" id="filmFill"></div>
+          <div class="db-cap t"></div>
+          <div class="db-lab" id="filmDbLab">база компанії</div>
+        </div>
+        <div class="hits" id="filmHits"></div>
+        <div class="final" id="filmFinal">
+          <span class="ic"></span>
+          <div><b>Договір поставки — проєкт готовий</b><span>зібрано з ваших же формулювань · 6 сторінок</span></div>
+        </div>
+      </div>
+      <p class="film-cap"><b id="filmCap">Натисніть, щоб подивитись</b><span id="filmSub"></span></p>
+      <div class="demo-run">
+        <button class="demo-btn" id="demoBtn" type="button">Показати, як це працює</button>
+      </div>
+    </div>
+  </section>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="rv">
+    <h2>Що ми зазвичай бачимо в практиці</h2>
+    <p class="lead">Ці чотири речі повторюються майже в кожній компанії, незалежно від розміру.</p>
+    <div class="pains">
+      <div class="pain"><h3>Строки живуть у голові</h3><p>Дати засідань і процесуальні строки тримаються в памʼяті та в таблиці, яку хтось має не забути оновити.</p></div>
+      <div class="pain"><h3>Про рішення дізнаються пізно</h3><p>У справі клієнта зʼявилось нове рішення — а компанія бачить його через тиждень, випадково.</p></div>
+      <div class="pain"><h3>Ті самі документи щоразу заново</h3><p>Договори, довіреності, заяви переписуються вручну, хоча відрізняються трьома полями.</p></div>
+      <div class="pain"><h3>Місяць закривається руками</h3><p>Хто скільки відпрацював, що виставлено, що оплачено — щоразу окрема вечірня робота.</p></div>
+    </div>
+  </section>
+
+  <section id="how" class="rv">
+    <h2>Як ми працюємо</h2>
+    <p class="lead">Чотири кроки. Перший нічого не коштує й ні до чого не зобовʼязує — після нього у вас на руках залишається розрахунок, навіть якщо ви нічого не замовите.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-head"><h3>Розбір процесів</h3><span class="chip free">безкоштовно</span></div>
+        <p>Година розмови. Розкладаємо роботу компанії на процеси й по кожному рахуємо, скільки годин на місяць забирає ручна частина. На виході — сторінка: що можна прибрати, скільки часу це вивільняє, з чого варто починати.</p>
+      </div>
+      <div class="step">
+        <div class="step-head"><h3>Проєктна консультація</h3><span class="chip">за потреби</span></div>
+        <p>Якщо після розбору видно, що процесів багато й вони повʼязані — робимо детальну карту: послідовність впровадження, що з чим стикується, скільки це займе. Платна, але зараховується у вартість подальших робіт.</p>
+      </div>
+      <div class="step">
+        <div class="step-head"><h3>Впровадження</h3><span class="chip">від А до Я</span></div>
+        <p>Беремо на себе все: налаштування, підключення до систем, у яких ви вже працюєте, перенесення даних, навчання співробітників. Ви не отримуєте інструкцію — ви отримуєте те, що працює.</p>
+      </div>
+      <div class="step">
+        <div class="step-head"><h3>Підтримка</h3><span class="chip">на вибір</span></div>
+        <p>Далі або ведемо ми, або передаємо вам разом із доступами й навчанням. Обидва варіанти рівноцінні — вибір за вами, не за нами.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rv">
+    <h2>Що можемо автоматизувати</h2>
+    <p class="lead">Починаємо з того процесу, який забирає найбільше часу саме у вас — це видно вже на першому розборі. Перелік не закритий.</p>
+    <div class="cat">
+      <div class="cat-col">
+        <h3>Строки й справи</h3>
+        <ul>
+          <li><b>Нагадування про засідання та строки</b>Рахуються від дати події, приходять завчасно в месенджер і календар.</li>
+          <li><b>Стеження за справами клієнтів</b>Нове рішення у справі помічається того ж дня.</li>
+          <li><b>Перевірка контрагента</b>Один запит замість кількох реєстрів, готовий звіт.</li>
+        </ul>
+      </div>
+      <div class="cat-col">
+        <h3>Клієнти й документи</h3>
+        <ul>
+          <li><b>Прийом звернень</b>Заявка стає карткою клієнта й одразу потрапляє до потрібного юриста.</li>
+          <li><b>Документи з шаблонів</b>Заповнюються з картки справи, а не переписуються.</li>
+          <li><b>Пошук по архіву компанії</b>Знайти власний документ за змістом, а не за назвою файлу.</li>
+        </ul>
+      </div>
+      <div class="cat-col">
+        <h3>Гроші й керування</h3>
+        <ul>
+          <li><b>Облік часу й рахунки</b>Години перетворюються на рахунок, несплачені нагадують про себе самі.</li>
+          <li><b>Зведення для керівника</b>Щотижня: справи в роботі, години, виставлено, оплачено.</li>
+          <li><b>Обмін даними між системами</b>Щоб те саме не вносилось двічі.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="band tint">
+  <div class="wrap">
+  <section class="rv">
+    <h2>Куди йде час юриста</h2>
+    <p class="lead">У практиці завжди дві чаші: робота, за яку платять, і рутина, яка з’їдає день. Автоматизація не додає годин — вона переносить вагу з однієї чаші на іншу.</p>
+
+    <div class="scales">
+      <svg viewBox="0 0 360 210" role="img" aria-label="Терези: чаша рутини легшає, чаша роботи зі справами важчає">
+        <g class="sc-line">
+          <line x1="180" y1="54" x2="180" y2="168"/>
+          <line x1="140" y1="176" x2="220" y2="176"/>
+          <path d="M158 168 L180 158 L202 168"/>
+        </g>
+        <g class="beam">
+          <line class="sc-line" x1="60" y1="54" x2="300" y2="54"/>
+          <circle class="sc-fill" cx="180" cy="54" r="5"/>
+        </g>
+        <g class="pan-l">
+          <line class="sc-line" x1="60" y1="54" x2="60" y2="96"/>
+          <path class="sc-pan" d="M22 96 Q60 130 98 96"/>
+          <g class="sc-fill muted">
+            <rect x="42" y="82" width="36" height="7" rx="1"/>
+            <rect x="48" y="72" width="24" height="7" rx="1"/>
+            <rect x="52" y="62" width="16" height="7" rx="1"/>
+          </g>
+        </g>
+        <g class="pan-r">
+          <line class="sc-line" x1="300" y1="54" x2="300" y2="96"/>
+          <path class="sc-pan" d="M262 96 Q300 130 338 96"/>
+          <g class="sc-fill">
+            <rect x="282" y="82" width="36" height="7" rx="1"/>
+            <rect x="288" y="72" width="24" height="7" rx="1"/>
+          </g>
+        </g>
+        <g class="sc-lab" text-anchor="middle">
+          <text x="60" y="198">Рутина</text>
+          <text x="300" y="198">Робота зі справами</text>
+        </g>
+      </svg>
+
+      <div>
+        <div class="gains">
+          <div class="gain"><b>Строки й нагадування</b><span class="t"><s>5 год</s> → <i>20 хв</i> / тиждень</span></div>
+          <div class="gain"><b>Типові документи</b><span class="t"><s>4 год</s> → <i>40 хв</i> / тиждень</span></div>
+          <div class="gain"><b>Закриття місяця</b><span class="t"><s>6 год</s> → <i>30 хв</i> / місяць</span></div>
+        </div>
+        <p style="margin-top:22px;color:var(--ink-3);font-size:14px">Це приклад розрахунку, а не обіцянка: на безкоштовному розборі ми рахуємо саме ваші числа — по ваших процесах і вашій команді.</p>
+      </div>
+    </div>
+  </section>
+
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="rv">
+    <h2>Порахуйте свою економію</h2>
+    <p class="lead">Введіть свої числа — і побачите, у що обходиться ручна робота вашій компанії щомісяця. Це оцінка: точну частку рахуємо на безкоштовному розборі.</p>
+    <div class="calc">
+      <div class="calc-in">
+        <div class="field">
+          <label for="cRate">Скільки коштує година роботи вашого юриста</label>
+          <div class="row">
+            <input type="number" id="cRate" value="900" min="0" step="50" inputmode="numeric">
+            <span class="unit">₴ / год</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="cHours">Скільки годин на тиждень команда витрачає на рутину</label>
+          <div class="row">
+            <input type="number" id="cHours" value="12" min="0" step="1" inputmode="numeric">
+            <span class="unit">год / тиждень</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="cShare">Яку частину цієї рутини можна прибрати</label>
+          <input type="range" id="cShare" min="20" max="90" step="5" value="60">
+          <span class="rv-val" id="cShareVal">60%</span>
+        </div>
+      </div>
+      <div class="calc-out">
+        <div>
+          <p class="lab">Вивільняється на місяць</p>
+          <p class="calc-big" id="cHoursOut">31 година</p>
+        </div>
+        <div class="calc-row"><span>У грошах на місяць</span><b id="cMonth">28 000 ₴</b></div>
+        <div class="calc-row"><span>За рік</span><b id="cYear">336 000 ₴</b></div>
+        <p class="calc-note">Рахунок простий: години рутини × частка, яку прибираємо × ваша ставка. Скільки саме автоматизується у вашому випадку, видно після години розбору.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="band warm">
+  <div class="wrap">
+  <section class="rv">
+    <h2>Ризик на нашому боці</h2>
+    <div class="guar">
+      <h3>Перший процес — або результат, або без оплати</h3>
+      <p>Ми беремо один ваш процес, домовляємось наперед, що вважається результатом, і робимо. Якщо на приймання результату немає — ви не платите й нічого нам не винні.</p>
+      <p>Так чесніше, ніж обіцяти на словах. Ви ризикуєте годиною розмови, ми — своєю роботою.</p>
+    </div>
+  </section>
+
+  </div>
+</div>
+
+<div class="band tint">
+  <div class="wrap">
+  <section class="rv">
+    <h2>Що кажуть клієнти</h2>
+    <p class="lead">Кожен відгук — про один конкретний процес і час, який він забирав до автоматизації. Наведено так, як їх надіслали.</p>
+    <div class="revs-sum">
+      <div><b>8</b><span>компаній поділились результатом</span></div>
+      <div><b>126</b><span>годин на місяць вивільнено сумарно</span></div>
+      <div><b>9–27</b><span>годин на місяць у кожній компанії</span></div>
+    </div>
+    <div class="revs" id="revs">
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#4E7CA8">О</span>
+          <div class="tg-id"><b>Олег, 38 років</b><span>Керуючий партнер юридичної фірми</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">Раніше звернення надходили з різних каналів, а інформацію про клієнта вручну переносили в таблицю та передавали юристу. Тепер картка клієнта створюється автоматично, відповідальний одразу отримує завдання, а ми бачимо статус кожного звернення.<span class="tg-meta">09:41<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">18 годин зекономлено на місяць</b><span class="tg-meta">09:42<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#8A6A22">І</span>
+          <div class="tg-id"><b>Ірина, 42 роки</b><span>Керуюча партнерка адвокатського обʼєднання</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">Процесуальні строки зберігалися в різних календарях і таблицях, тому їх доводилося регулярно перевіряти вручну. Тепер потрібні дати потрапляють у календар, а відповідальні юристи завчасно отримують нагадування. Контроль більше не залежить від того, чи хтось вчасно відкрив таблицю.<span class="tg-meta">10:18<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">12 годин зекономлено на місяць</b><span class="tg-meta">10:19<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#5C7D5E">А</span>
+          <div class="tg-id"><b>Андрій, 36 років</b><span>Керівник юридичної практики</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">Договори, довіреності та типові заяви ми готували на основі старих файлів, щоразу змінюючи дані вручну. Тепер документ формується з картки клієнта, а юрист лише перевіряє його перед використанням. Підготовка стала швидшою, а помилок у реквізитах — значно менше.<span class="tg-meta">11:07<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">27 годин зекономлено на місяць</b><span class="tg-meta">11:08<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#9A5F55">М</span>
+          <div class="tg-id"><b>Марина, 40 років</b><span>Операційна директорка юридичної компанії</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">Наприкінці місяця ми вручну збирали години команди, перевіряли виконані роботи та готували рахунки клієнтам. Тепер інформація накопичується впродовж місяця, а рахунки формуються на її основі. Замість кількох робочих днів нам залишається лише фінальна перевірка.<span class="tg-meta">12:52<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">14 годин зекономлено на місяць</b><span class="tg-meta">12:53<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#5D6A8C">В</span>
+          <div class="tg-id"><b>Віталій, 45 років</b><span>Керуючий партнер адвокатського бюро</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">Для підготовки щотижневого звіту доводилося окремо збирати інформацію в юристів і бухгалтерії. Тепер я отримую одне зведення: справи в роботі, завантаження команди, відпрацьовані години, виставлені рахунки та оплати.<span class="tg-meta">14:26<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">9 годин зекономлено на місяць</b><span class="tg-meta">14:27<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#7A6396">Н</span>
+          <div class="tg-id"><b>Наталія, 39 років</b><span>Партнерка юридичної фірми</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">За декілька років у нас накопичилися тисячі файлів, тому потрібний документ часто шукали за приблизною назвою або запитували в колег. Тепер його можна знайти за клієнтом, справою чи змістом. Особливо помітна різниця, коли інформація потрібна терміново.<span class="tg-meta">15:33<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">13 годин зекономлено на місяць</b><span class="tg-meta">15:34<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#3F7E86">Р</span>
+          <div class="tg-id"><b>Роман, 41 рік</b><span>Керуючий партнер юридичної компанії</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">Інформацію про клієнта та справу ми окремо вносили в CRM, робочу систему й фінансову таблицю. Через це дані дублювалися, а помилки доводилося виправляти вручну. Тепер достатньо внести інформацію один раз — далі вона автоматично передається між системами.<span class="tg-meta">16:49<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">22 години зекономлено на місяць</b><span class="tg-meta">16:50<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+      <article class="tg">
+        <div class="tg-bar">
+          <span class="tg-av" style="background:#9A7940">С</span>
+          <div class="tg-id"><b>Сергій, 44 роки</b><span>Партнер адвокатського обʼєднання</span></div>
+        </div>
+        <div class="tg-chat">
+          <div class="tg-msg">Частину завдань ми ставили в робочих чатах, тому керівникам доводилося постійно уточнювати статуси та нагадувати про строки. Тепер завдання створюються з відповідальними й датами виконання, а прострочення видно одразу. У команди зʼявився зрозумілий порядок роботи.<span class="tg-meta">18:12<span class="tg-tick">&#10003;&#10003;</span></span></div>
+          <div class="tg-msg"><b class="tg-res">11 годин зекономлено на місяць</b><span class="tg-meta">18:13<span class="tg-tick">&#10003;&#10003;</span></span></div>
+        </div>
+      </article>
+    </div>
+    <div class="revs-nav">
+      <button class="rev-btn" data-dir="-1" aria-label="Попередній відгук">&#8592;</button>
+      <button class="rev-btn" data-dir="1" aria-label="Наступний відгук">&#8594;</button>
+    </div>
+  </section>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="rv">
+    <h2>Формати впровадження</h2>
+    <p class="lead">Точна вартість визначається після розбору — вона залежить від того, у чому компанія веде справи зараз і скільки систем треба звʼязати між собою. Нижче — орієнтир, щоб було від чого відштовхуватись.</p>
+    <div class="pricing">
+      <div class="pricing-main">
+        <p class="pick">Вартість</p>
+        <h3>Розраховується індивідуально</h3>
+        <p>Після безкоштовного розбору ви отримуєте розрахунок саме по вашій компанії — з переліком робіт, строками й сумою.</p>
+        <ul class="pricing-dep">
+          <li>У чому компанія веде справи зараз</li>
+          <li>Скільки систем треба звʼязати між собою</li>
+          <li>Скільки процесів беремо в роботу</li>
+        </ul>
+      </div>
+      <div class="pricing-side">
+        <p class="pick">З чого зазвичай починають</p>
+        <div class="scope"><b>Один процес</b><span>Та автоматизація, що болить найбільше. Кілька днів роботи.</span></div>
+        <div class="scope"><b>Звʼязка процесів</b><span>Звернення → картка клієнта → документ → рахунок. Кілька тижнів.</span></div>
+        <div class="scope"><b>Під ключ</b><span>Уся практика на автоматизованому контурі. Від місяця.</span></div>
+      </div>
+    </div>
+    <p class="star">Сервіси, на яких працює автоматизація, оплачуються окремо й напряму — рахунки приходять вам, доступи оформлюються на вашу компанію.</p>
+    <div class="note">
+      <p class="note-t">Чому не називаємо точну ціну одразу</p>
+      <p>Дві компанії з однаковим запитом можуть відрізнятися вдесятеро за обсягом робіт: одна вже веде справи в системі, до якої треба просто підключитись, інша тримає все в таблицях і на папері. Назвати число до розбору означало б або перестрахуватись, або пообіцяти те, чого не вийде витримати. Тому спершу — безкоштовна година, а вже потім конкретна цифра саме для вас.</p>
+    </div>
+  </section>
+
+  <section class="rv">
+    <h2>Підтримка — або ви, або ми</h2>
+    <p class="lead">Після впровадження рішення можна вести самостійно або залишити на нас. Перейти з одного варіанта на інший можна будь-коли.</p>
+    <div class="split">
+      <div><h3>Ведете ви</h3><p>При здачі передаємо доступи й документацію та навчаємо вашу людину. Далі ви повністю автономні.</p></div>
+      <div><h3>Ведемо ми</h3><p>Стежимо за роботою, реагуємо на збої, підправляємо під зміни у ваших процесах. Обсяг і вартість — індивідуально.</p></div>
+    </div>
+  </section>
+
+</div>
+
+<div class="band tint">
+  <div class="wrap">
+  <section class="rv">
+    <h2>Наші продукти</h2>
+    <p class="lead">Ми не лише впроваджуємо чуже — ми будуємо власне. Це те, на чому перевіряються наші підходи, перш ніж потрапити до клієнта.</p>
+    <div class="prod">
+      <span class="live"><span class="dot-live"></span>працює й оновлюється щодня</span>
+      <h3>Legal AI — аналіз судової практики</h3>
+      <p>Система, що читає матеріали справи, знеособлює їх, підбирає релевантну практику з реєстру судових рішень, звіряє законодавство на дату спору й готує документ. Уся база оновлюється щодня.</p>
+      <div class="prod-figs">
+        <div><b>27 млн</b> рішень із повним текстом</div>
+        <div><b>136 млн</b> карток справ</div>
+        <div><b>23</b> галузі права</div>
+        <div>практика <b>з 2000</b> року</div>
+      </div>
+      <p style="font-size:14px;color:var(--ink-3)">Зараз у тестовій експлуатації. Можемо показати в роботі на вашій справі просто під час розмови.</p>
+    </div>
+  </section>
+
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="rv" style="border-bottom:none">
+    <h2>Ваші дані й ваші доступи</h2>
+    <div class="split">
+      <div><h3>Угода — до початку робіт</h3><p>Нерозголошення підписується перед стартом, а не після. У договорі окремо фіксується, до яких даних ми маємо доступ і в яких межах.</p></div>
+      <div><h3>Мінімум потрібного</h3><p>Більшість автоматизацій — нагадування, звернення, звіти, рух документів — узагалі не потребують доступу до матеріалів ваших клієнтів.</p></div>
+      <div><h3>Усе оформлюється на вас</h3><p>Реєстрації, ключі, сервіси — власником лишаєтесь ви. Вирішите працювати без нас — переносити нічого не треба.</p></div>
+      <div><h3>Ми в цьому працюємо</h3><p>Юридична галузь — наша основна робота, а не разовий проєкт. Не витрачаємо ваш час на занурення в предметну область.</p></div>
+    </div>
+  </section>
+
+</div>
+
+<div class="contact" id="next">
+  <div class="wrap">
+    <p class="eyebrow">Наступний крок</p>
+    <div class="rule-sm"></div>
+    <h2>Домовимось про розбір</h2>
+    <p class="lead">Година розмови — і ви побачите свою практику в цифрах: скільки годин на місяць забирає ручна робота і що з цього можна прибрати першим. Безкоштовно й ні до чого не зобовʼязує.</p>
+    <div class="cta-card">
+      <a class="btn btn-lg" href="https://t.me/ai_legal_practice_bot?start=contact" target="_blank" rel="noopener noreferrer">Записатись на розбір у Telegram</a>
+      <ol class="cta-steps">
+        <li><b>Два дотики екрана.</b> Бот запитає, як до вас звертатись, і номер — ділитись контактом можна однією кнопкою, вручну набирати нічого не треба.</li>
+        <li><b>За бажанням</b> — одним рядком, що саме хочеться прибрати з рутини. Можна пропустити.</li>
+        <li><b>Відповідаємо того ж дня</b> й пропонуємо кілька зручних вікон на розмову.</li>
+      </ol>
+    </div>
+    <p class="alt-lbl">Якщо зручніше інакше</p>
+    <div class="alt-ways">
+      <div class="alt">
+        <p class="lbl">Телефоном</p>
+        <b><a href="tel:+380987541154">+380 (98) 754-11-54</a></b>
+        <p>Дзвінок, Viber або Telegram на цей самий номер — як вам звичніше.</p>
+      </div>
+      <div class="alt">
+        <p class="lbl">Поштою</p>
+        <b class="mail"><a href="mailto:ai.legal.xv@gmail.com?subject=%D0%A0%D0%BE%D0%B7%D0%B1%D1%96%D1%80%20%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D1%96%D0%B2&amp;body=%D0%92%D1%96%D1%82%D0%B0%D1%8E%21%20%D0%9A%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B8%3A%20%0A%D0%97%D0%B0%D0%BF%D0%B8%D1%82%3A%20">ai.legal.xv@gmail.com</a></b>
+        <p>Залиште контакти й одним рядком опишіть запит — відповімо того ж дня.</p>
+      </div>
+    </div>
+    <p class="contact-foot">Далі: узгоджуємо час → година розмови → за день надсилаємо розрахунок. Рішення за вами.</p>
+  </div>
+</div>
+
+<div class="dock" id="dock" aria-hidden="true">
+  <p class="dock-t">Перша година — безкоштовно</p>
+  <a class="dock-b" href="https://t.me/ai_legal_practice_bot?start=dock" target="_blank" rel="noopener noreferrer" tabindex="-1">Записатись на розбір</a>
+</div>
+
+<div class="wrap">
+  <footer class="bot">
+    <p>Вартість і строки розраховуються індивідуально під потреби компанії — після безкоштовного розбору процесів.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var slow = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Поява блоків при прокручуванні
+  var rv = document.querySelectorAll('.rv');
+  if (slow || !('IntersectionObserver' in window)) {
+    rv.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    rv.forEach(function (el) { io.observe(el); });
+  }
+
+  // Лічильники: накручуються, коли смуга справді зʼявляється на екрані.
+  // Два незалежні тригери (спостерігач і перевірка при прокрутці) і жодного
+  // таймера — інакше числа встигають стати фінальними ще до прокрутки.
+  var nums = Array.prototype.slice.call(document.querySelectorAll('.stat b'));
+  function runCount(el) {
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    var stat = el.getAttribute('data-static');
+    if (stat) { el.textContent = stat; return; }
+    var to = parseFloat(el.getAttribute('data-to')) || 0;
+    var suf = el.getAttribute('data-suffix') || '';
+    if (slow) { el.textContent = to + suf; return; }
+    var t0 = null, dur = 1200;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + suf;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  nums.forEach(function (el) { el.textContent = '0' + (el.getAttribute('data-suffix') || ''); });
+
+  if (slow) {
+    nums.forEach(runCount);
+  } else {
+    var sweep = function () {
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      var left = false;
+      nums.forEach(function (el) {
+        if (el.dataset.done) return;
+        var r = el.getBoundingClientRect();
+        if (r.top < vh - 70 && r.bottom > 40) runCount(el); else left = true;
+      });
+      if (!left) {
+        window.removeEventListener('scroll', sweep);
+        window.removeEventListener('resize', sweep);
+      }
+    };
+    if ('IntersectionObserver' in window) {
+      var io2 = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { runCount(e.target); io2.unobserve(e.target); } });
+      }, { threshold: 0.35 });
+      nums.forEach(function (el) { io2.observe(el); });
+    }
+    window.addEventListener('scroll', sweep, { passive: true });
+    window.addEventListener('resize', sweep);
+  }
+
+
+  // Міні-ролик: документи накидуються в базу, далі пошук і готовий документ
+  var film = document.getElementById('film');
+  var dBtn = document.getElementById('demoBtn');
+  if (film && dBtn) {
+    var fDb = document.getElementById('filmDb');
+    var fFill = document.getElementById('filmFill');
+    var fDbLab = document.getElementById('filmDbLab');
+    var fSearch = document.getElementById('filmSearch');
+    var fQuery = document.getElementById('filmQuery');
+    var fCar = document.getElementById('filmCar');
+    var fHits = document.getElementById('filmHits');
+    var fFinal = document.getElementById('filmFinal');
+    var fCap = document.getElementById('filmCap');
+    var fSub = document.getElementById('filmSub');
+
+    var QUERY = 'договір поставки з відстрочкою платежу';
+    var HITS = ['Договір поставки · 2024', 'Специфікація · зразок', 'Претензія · формулювання'];
+    var TOTAL = 12480, N = 26;
+    var jobs = [], flying = [], played = false;
+
+    function stop() { jobs.forEach(function (j) { clearTimeout(j); clearInterval(j); }); jobs = []; }
+    function at(ms, fn) { jobs.push(setTimeout(fn, ms)); }
+
+    function clearStage() {
+      flying.forEach(function (el) { el.remove(); }); flying = [];
+      fHits.innerHTML = '';
+      fFill.style.height = '0';
+      fDb.classList.remove('on');
+      fSearch.classList.remove('on');
+      fFinal.classList.remove('on');
+      fQuery.textContent = '';
+      fCar.style.display = 'none';
+      fDbLab.textContent = 'база компанії';
+    }
+
+    function dbPoint() {
+      var f = film.getBoundingClientRect(), d = fDb.getBoundingClientRect();
+      return { x: d.left - f.left + d.width / 2, y: d.top - f.top + 26 };
+    }
+
+    // Двофазний політ: спершу до точки над базою, потім падіння всередину
+    function toss(i) {
+      var isFolder = i % 3 === 2;
+      var el = document.createElement('div');
+      el.className = 'fly ' + (isFolder ? 'folder' : 'sheet');
+      if (!isFolder) el.innerHTML = '<i></i><i></i><i></i>';
+      film.appendChild(el);
+      flying.push(el);
+
+      var w = film.clientWidth, h = film.clientHeight, p = dbPoint();
+      var fromLeft = i % 2 === 0;
+      var sx = fromLeft ? -60 : w + 60;
+      var sy = 40 + Math.random() * (h * 0.6);
+      var rot = (Math.random() * 70 - 35);
+      var hoverX = p.x - 14 + (Math.random() * 44 - 22);
+      var hoverY = p.y - 74 - Math.random() * 26;
+
+      el.style.transform = 'translate(' + sx + 'px,' + sy + 'px) rotate(' + rot + 'deg)';
+
+      requestAnimationFrame(function () {
+        el.style.transition = 'transform .52s cubic-bezier(.25,.7,.35,1), opacity .18s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translate(' + hoverX + 'px,' + hoverY + 'px) rotate(' + (rot / 6) + 'deg)';
+      });
+
+      at(540, function () {
+        el.style.transition = 'transform .34s cubic-bezier(.5,0,.85,.6), opacity .2s ease .16s';
+        el.style.transform = 'translate(' + (p.x - 14) + 'px,' + (p.y + 8) + 'px) rotate(0deg) scale(.28)';
+        el.style.opacity = '0';
+      });
+      at(900, function () {
+        el.remove();
+        fDb.classList.add('hit-pulse');
+        setTimeout(function () { fDb.classList.remove('hit-pulse'); }, 300);
+      });
+    }
+
+    function showFinal() {
+      fDb.classList.add('on');
+      fFill.style.height = '98px';
+      fDbLab.textContent = TOTAL.toLocaleString('uk-UA') + ' документів';
+      fSearch.classList.add('on');
+      fQuery.textContent = QUERY;
+      fHits.innerHTML = '';
+      HITS.forEach(function (t) {
+        var el = document.createElement('div');
+        el.className = 'hit on'; el.textContent = t; fHits.appendChild(el);
+      });
+      fFinal.classList.add('on');
+      fCap.textContent = 'Документ зібрано з ваших напрацювань';
+      fSub.textContent = 'юристу лишається перевірити';
+      dBtn.textContent = 'Показати ще раз';
+      dBtn.disabled = false;
+    }
+
+    function play() {
+      stop(); clearStage();
+      dBtn.disabled = true;
+      if (slow) { showFinal(); return; }
+
+      fCap.textContent = 'Збираємо документи компанії';
+      fSub.textContent = 'договори · акти · заяви · довіреності';
+      fDb.classList.add('on');
+
+      var seen = 0;
+      for (var i = 0; i < N; i++) {
+        (function (k) {
+          at(k * 95, function () {
+            toss(k);
+            seen++;
+            fFill.style.height = Math.round(seen / N * 98) + 'px';
+            fDbLab.textContent = Math.round(seen / N * TOTAL).toLocaleString('uk-UA') + ' документів';
+          });
+        })(i);
+      }
+
+      var tReady = N * 95 + 900;
+      at(tReady, function () {
+        fCap.textContent = 'База готова';
+        fSub.textContent = TOTAL.toLocaleString('uk-UA') + ' документів, які вже є у вашій компанії';
+      });
+
+      var tSearch = tReady + 800;
+      at(tSearch, function () {
+        fCap.textContent = 'Шукаємо потрібне формулювання';
+        fSub.textContent = '';
+        fSearch.classList.add('on');
+        fCar.style.display = 'inline-block';
+        var k = 0;
+        var iv = setInterval(function () {
+          fQuery.textContent = QUERY.slice(0, ++k);
+          if (k >= QUERY.length) { clearInterval(iv); fCar.style.display = 'none'; }
+        }, 36);
+        jobs.push(iv);
+      });
+
+      var tHits = tSearch + QUERY.length * 36 + 450;
+      at(tHits, function () {
+        fCap.textContent = 'Знайдено у вашій базі';
+        fSub.textContent = '3 схожі документи за секунду';
+        HITS.forEach(function (t, i) {
+          var el = document.createElement('div');
+          el.className = 'hit'; el.textContent = t; fHits.appendChild(el);
+          at(i * 200, function () { el.classList.add('on'); });
+        });
+      });
+
+      at(tHits + 1250, function () {
+        fCap.textContent = 'Документ зібрано з ваших напрацювань';
+        fSub.textContent = 'юристу лишається перевірити';
+        fFinal.classList.add('on');
+        dBtn.textContent = 'Показати ще раз';
+        dBtn.disabled = false;
+      });
+    }
+
+    dBtn.addEventListener('click', play);
+    if ('IntersectionObserver' in window) {
+      var io3 = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting && !played) { played = true; play(); io3.unobserve(e.target); }
+        });
+      }, { threshold: 0.3 });
+      io3.observe(film);
+    }
+  }
+
+  // Калькулятор економії
+  var cRate = document.getElementById('cRate');
+  var cHours = document.getElementById('cHours');
+  var cShare = document.getElementById('cShare');
+  if (cRate && cHours && cShare) {
+    var fmt = new Intl.NumberFormat('uk-UA');
+    var cShareVal = document.getElementById('cShareVal');
+    var cHoursOut = document.getElementById('cHoursOut');
+    var cMonth = document.getElementById('cMonth');
+    var cYear = document.getElementById('cYear');
+
+    function hourWord(n) {
+      var d = n % 10, dd = n % 100;
+      if (d === 1 && dd !== 11) return 'година';
+      if (d >= 2 && d <= 4 && (dd < 12 || dd > 14)) return 'години';
+      return 'годин';
+    }
+
+    function calc() {
+      var rate = Math.max(0, parseFloat(cRate.value) || 0);
+      var hrs = Math.max(0, parseFloat(cHours.value) || 0);
+      var share = parseInt(cShare.value, 10) / 100;
+      var perMonth = Math.round(hrs * 4.33 * share);
+      var money = Math.round(perMonth * rate);
+      cShareVal.textContent = cShare.value + '%';
+      cHoursOut.textContent = fmt.format(perMonth) + ' ' + hourWord(perMonth);
+      cMonth.textContent = fmt.format(money) + ' ₴';
+      cYear.textContent = fmt.format(money * 12) + ' ₴';
+    }
+    [cRate, cHours, cShare].forEach(function (el) {
+      el.addEventListener('input', calc);
+      el.addEventListener('change', calc);
+    });
+    calc();
+  }
+
+  // Плаваюча кнопка: видима між шапкою та блоком контактів
+  var dock = document.getElementById('dock');
+  var hero = document.querySelector('.hero');
+  var next = document.getElementById('next');
+  if (dock && hero && next && 'IntersectionObserver' in window) {
+    var link = dock.querySelector('.dock-b');
+    var pastHero = false, atContact = false;
+    function sync() {
+      var show = pastHero && !atContact;
+      dock.classList.toggle('in', show);
+      dock.setAttribute('aria-hidden', String(!show));
+      link.tabIndex = show ? 0 : -1;
+    }
+    new IntersectionObserver(function (es) { pastHero = !es[0].isIntersecting; sync(); },
+      { threshold: 0 }).observe(hero);
+    new IntersectionObserver(function (es) { atContact = es[0].isIntersecting; sync(); },
+      { threshold: 0 }).observe(next);
+  }
+
+  // Карусель відгуків: стрілки гортають на ширину картки
+  var revs = document.getElementById('revs');
+  if (revs) {
+    document.querySelectorAll('.rev-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var card = revs.querySelector('.tg');
+        if (!card) return;
+        var step = card.getBoundingClientRect().width + 18;
+        revs.scrollBy({ left: step * Number(b.dataset.dir), behavior: slow ? 'auto' : 'smooth' });
+      });
+    });
+  }
+
+  // Усередині переглядача артефактів сторінка живе у захищеній рамці, яка не
+  // пропускає mailto: і tel: — перехід ламає перегляд. Тому в рамці клік
+  // копіює адресу, а на власному домені посилання працюють як звичайно.
+  if (window.top !== window.self) {
+    document.querySelectorAll('a[href^="mailto:"], a[href^="tel:"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var value = a.textContent.trim();
+        var original = value;
+        function flash(msg) {
+          a.textContent = msg;
+          setTimeout(function () { a.textContent = original; }, 1600);
+        }
+        function selectSelf() {
+          try {
+            var r = document.createRange();
+            r.selectNodeContents(a);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(r);
+          } catch (_) {}
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(value).then(
+            function () { flash('Скопійовано'); },
+            function () { selectSelf(); flash('Натисніть Cmd+C'); }
+          );
+        } else {
+          selectSelf();
+          flash('Натисніть Cmd+C');
+        }
+      });
+      a.title = 'У режимі перегляду адреса копіюється. На сайті — відкриє пошту або дзвінок.';
+    });
+  }
+})();
+</script>
+</body>
+</html>

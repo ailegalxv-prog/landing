@@ -1,0 +1,74 @@
+# Статичний сайт: збірки немає, публікується папка public/.
+# Документація: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
+# Версії дій звірені зі starter-workflows GitHub (pages/static.yml), 16.09.2026.
+
+name: Deploy landing to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Права для публікації в Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Один деплой за раз; поточний не скасовуємо — це продакшн.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Перевірка в кожному pull request і на main: файли на місці, посилання не загубились.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Обовʼязкові файли на місці
+        run: |
+          for f in index.html 404.html favicon.svg favicon.ico apple-touch-icon.png og-image.png robots.txt sitemap.xml CNAME; do
+            test -s "public/$f" || { echo "missing public/$f"; exit 1; }
+          done
+
+      - name: Домен у CNAME
+        run: grep -qx 'orbita-ix.com' public/CNAME
+
+      - name: Canonical не загубився
+        run: grep -q '<link rel="canonical" href="https://orbita-ix.com/">' public/index.html
+
+      - name: Усі три кнопки ведуть у Telegram-бот із мітками джерела
+        run: |
+          for tag in hero dock contact; do
+            grep -q "https://t.me/ai_legal_practice_bot?start=$tag" public/index.html \
+              || { echo "missing CTA source label: $tag"; exit 1; }
+          done
+
+  # Публікація — лише з main, після зеленого check.
+  deploy:
+    needs: check
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
