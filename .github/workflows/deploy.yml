@@ -32,7 +32,7 @@ jobs:
 
       - name: Обовʼязкові файли на місці
         run: |
-          for f in index.html 404.html favicon.svg favicon.ico apple-touch-icon.png og-image.png logo-light.png robots.txt sitemap.xml CNAME; do
+          for f in index.html 404.html favicon.svg favicon.ico apple-touch-icon.png og-image.png logo-light.png email-logo.png robots.txt sitemap.xml CNAME; do
             test -s "public/$f" || { echo "missing public/$f"; exit 1; }
           done
 
