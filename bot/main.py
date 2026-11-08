@@ -172,6 +172,67 @@ def handle(msg):
         say(chat_id, TEXT_FORWARDED)
 
 
+# ---------- Заявки з форми сайту (раніше send.php, якому на GitHub Pages ніде виконуватись) ----------
+
+SITE_ORIGINS = {"https://orbita-ix.com", "https://www.orbita-ix.com"}
+LEAD_FIELDS = [  # поле форми -> підпис у повідомленні (як у send.php)
+    ("audience", "Хто"),
+    ("name", "Ім'я"),
+    ("phone", "Телефон"),
+    ("team_size", "Юристів у команді"),
+    ("message", "Задача"),
+    ("calc_hours", "Калькулятор"),
+    ("pains", "Що болить"),
+    ("page", "Сторінка"),
+]
+_hits = {}  # ip -> [час заявок], проста межа від флуду
+
+
+def too_many(ip, limit=5, window=600):
+    t = datetime.now().timestamp()
+    with _lock:
+        recent = [x for x in _hits.get(ip, []) if t - x < window]
+        recent.append(t)
+        _hits[ip] = recent
+        if len(_hits) > 5000:
+            _hits.clear()
+    return len(recent) > limit
+
+
+def with_cors(resp):
+    origin = request.headers.get("Origin", "")
+    if origin in SITE_ORIGINS:
+        resp.headers["Access-Control-Allow-Origin"] = origin
+        resp.headers["Vary"] = "Origin"
+    return resp
+
+
+@app.route("/lead", methods=["POST", "OPTIONS"])
+def site_lead():
+    if request.method == "OPTIONS":
+        resp = with_cors(app.make_response(("", 204)))
+        resp.headers["Access-Control-Allow-Methods"] = "POST"
+        return resp
+    if request.headers.get("Origin", "") not in SITE_ORIGINS:
+        return jsonify(ok=False), 403
+    form = request.form
+    if form.get("website"):  # пастка для ботів: людина це поле не бачить
+        return with_cors(jsonify(ok=True))
+    ip = (request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+          or request.remote_addr or "")
+    if too_many(ip):
+        return with_cors(jsonify(ok=False)), 429
+    values = {k: (form.get(k) or "").strip()[:1000] for k, _ in LEAD_FIELDS}
+    digits = "".join(ch for ch in values["phone"] if ch.isdigit())
+    if not values["name"] or len(digits) < 10:
+        return with_cors(jsonify(ok=False)), 422
+    h = html.escape
+    lines = [f"{label}: <b>{h(values[k])}</b>" for k, label in LEAD_FIELDS if values[k]]
+    text = "🔔 <b>Заявка з форми сайту</b>\n\n" + "\n".join(lines) + f"\n🕒 {now()}"
+    ok = notify(text)
+    return with_cors(jsonify(ok=ok)), (200 if ok else 502)
+
+
 @app.get("/")
 def health():
     return jsonify(ok=True)
