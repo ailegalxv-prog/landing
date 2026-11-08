@@ -1,1357 +1,1491 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Автоматизація юридичних бізнес-процесів</title>
-<meta name="description" content="Прибираємо ручну роботу з юридичної практики: строки, документи, звернення, облік часу й рахунки. Перша година розбору процесів — безкоштовно.">
-<link rel="canonical" href="https://orbita-ix.com/">
-<meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORBITA IX — автоматизація юридичних бізнес-процесів</title>
+<meta name="description" content="Безкоштовна година розбору процесів для юридичних компаній і юристів із власною практикою. Розрахунок годин ручної роботи залишається у вас.">
 <meta name="theme-color" content="#0A1725">
-<meta name="color-scheme" content="light only">
-<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="stylesheet" href="style.css?v=1">
+<script>document.documentElement.classList.add("js")</script>
 
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-N5K76HTQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
 
-<meta property="og:type" content="website">
-<meta property="og:locale" content="uk_UA">
-<meta property="og:url" content="https://orbita-ix.com/">
-<meta property="og:title" content="Автоматизація юридичних бізнес-процесів">
-<meta property="og:description" content="Час юриста — на справи, а не на нагадування, таблиці й пошук документів. Перша година розбору — безкоштовно.">
-<meta property="og:image" content="https://orbita-ix.com/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
 
-<style>
-  /* Базовий reset, який раніше давала обгортка артефакту */
-  body { margin: 0; }
-  img { max-width: 100%; }
-  [hidden]:not([hidden=until-found]) { display: none !important; }
-</style>
-<style>
-  /* Сторінка навмисно має ОДИН вигляд — світлий, теплий папір.
-     Комерційна сторінка для клієнтів не повинна ставати темною лише тому,
-     що в телефоні ввімкнена темна тема. Тому темних варіантів тут немає,
-     а color-scheme нижче забороняє браузеру самому інвертувати кольори. */
-  :root, :root[data-theme="dark"], :root[data-theme="light"] {
-    color-scheme: light only;
-    --paper:#FFFDF8; --tint:#F6F2E9; --card:#FFFFFF; --rule:#E4DCCB; --rule-2:#F0EADE;
-    --ink:#0F1A2A; --ink-2:#545D6B; --ink-3:#8A8578;
-    --navy:#0A1725; --navy-2:#0E1F31; --on-navy:#EDF2F9; --on-navy-2:#94A6BE;
-    --grid:rgba(160,195,245,.10); --hair:rgba(160,195,245,.18);
-    --accent:#0E4B8C; --accent-wash:#F2E9D8;
-    --brass:#8A6A22; --brass-solid:#B08A34; --on-brass:#12100A;
-    --serif: Georgia, 'Iowan Old Style', Charter, 'Times New Roman', serif;
-    --sans: system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-    --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
-  }
-
-  * { box-sizing: border-box; }
-  body {
-    background: var(--paper); color: var(--ink);
-    font-family: var(--sans); font-size: 16.5px; line-height: 1.65;
-    margin: 0; padding: 0; -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 940px; margin: 0 auto; padding: 0 24px; }
-
-  /* ── Обкладинка ────────────────────────────────────── */
-  .hero {
-    background:
-      repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 28px),
-      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 28px),
-      var(--navy);
-    color: var(--on-navy); padding: 88px 0 76px;
-  }
-  /* Верхній рядок шапки: надпис ліворуч, логотип праворуч — одна лінія.
-     На вузьких екранах надпис переноситься на два рядки, логотип лишається праворуч.
-     Файл логотипа віддається у повній роздільності (966x185), а показується вужчим —
-     так він різкий і на retina. width/height в атрибутах тримають пропорцію,
-     тому верстка не стрибає під час завантаження. */
-  .brand-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0 0 20px; }
-  .brand-row .eyebrow { margin: 0; }
-  .brand { display: block; width: 176px; height: auto; flex: 0 0 auto; }
-  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--brass); margin: 0 0 20px; }
-  .hero .eyebrow { color: var(--brass-solid); }
-  .rule-sm { width: 54px; height: 1px; background: var(--brass-solid); margin: 0 0 26px; }
-  .hero h1 {
-    font-family: var(--serif); font-weight: 400; color: var(--on-navy);
-    font-size: clamp(37px,6.6vw,66px); line-height: 1.05; letter-spacing: -.022em;
-    margin: 0 0 24px; max-width: 15ch; text-wrap: balance;
-  }
-  .hero .lede { font-size: clamp(17.5px,2.3vw,21px); color: var(--on-navy-2); margin: 0 0 36px; max-width: 46ch; text-wrap: pretty; }
-  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
-  .btn { display: inline-block; background: var(--brass-solid); color: var(--on-brass); font-weight: 660; font-size: 16px; padding: 15px 30px; text-decoration: none; }
-  .btn-ghost { display: inline-block; color: var(--on-navy); border: 1px solid var(--hair); padding: 14px 26px; text-decoration: none; font-weight: 560; }
-
-  /* ── Схема потоку ──────────────────────────────────── */
-  .flow { margin-top: 54px; border-top: 1px solid var(--hair); padding-top: 30px; }
-  .flow-cap { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--on-navy-2); margin: 0 0 18px; }
-  /* Дві схеми — той самий зміст, різна вісь. Горизонтальна на вузькому екрані
-     стискалась до нечитабельного й вимагала гортання, тому там окрема
-     вертикальна розкладка з більшими підписами. */
-  .flow svg { width: 100%; height: auto; overflow: visible; }
-  /* Специфічність тримаємо однаковою (.flow svg.клас), інакше правило вище
-     перебиває приховування і показуються обидві схеми одночасно. */
-  .flow svg.flow-h { display: block; }
-  .flow svg.flow-v { display: none; max-width: 340px; }
-  .flab-v { font-family: var(--sans); font-size: 15px; fill: var(--on-navy); }
-  @media (max-width: 660px) {
-    .flow svg.flow-h { display: none; }
-    .flow svg.flow-v { display: block; }
-  }
-
-  /* ── Міні-ролик: документи → база → пошук → документ ── */
-  .film-wrap { display: grid; gap: 14px; }
-  .film { position: relative; overflow: hidden; border: 1px solid var(--rule);
-          padding: 18px 16px 20px; display: flex; flex-direction: column;
-          align-items: center; gap: 16px; min-height: 430px;
-          background:
-            repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 30px),
-            repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 30px),
-            var(--navy); }
-
-  /* Летючі документи */
-  .fly { position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none; z-index: 1; }
-  .fly.sheet { width: 26px; height: 34px; background: #EDF2F9; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
-  .fly.sheet i { display: block; height: 2px; background: rgba(10,23,37,.22); margin: 5px 4px 0; }
-  .fly.sheet i:nth-child(2) { width: 62%; }
-  .fly.sheet::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0;
-                       width: 2px; background: var(--brass-solid); }
-  .fly.folder { width: 34px; height: 26px; background: #C9A254; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
-  .fly.folder::before { content: ""; position: absolute; left: 0; top: -5px; width: 15px;
-                        height: 5px; background: #C9A254; }
-  .fly.folder::after { content: ""; position: absolute; left: 4px; right: 4px; top: 6px;
-                       height: 2px; background: rgba(21,18,10,.28); box-shadow: 0 5px 0 rgba(21,18,10,.18); }
-
-  /* База */
-  .db { position: relative; width: 118px; height: 132px; opacity: .4; flex: none;
-        transition: opacity .5s ease, transform .5s ease; transform: scale(.9); }
-  .db.on { opacity: 1; transform: scale(1); }
-  .db-side { position: absolute; left: 0; right: 0; top: 17px; bottom: 17px;
-             border-left: 1px solid var(--brass-solid); border-right: 1px solid var(--brass-solid); }
-  .db-cap { position: absolute; left: 0; right: 0; height: 34px;
-            border: 1px solid var(--brass-solid); border-radius: 50%; }
-  .db-cap.t { top: 0; background: var(--navy); z-index: 3; }
-  .db-cap.b { bottom: 0; }
-  .db-fill { position: absolute; left: 1px; right: 1px; bottom: 17px; height: 0; z-index: 2;
-             background: rgba(176,138,52,.32); transition: height .35s ease; }
-  .db.hit-pulse { animation: dbPulse .3s ease; }
-  @keyframes dbPulse { 50% { transform: scale(1.045) } }
-  .db-lab { position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
-            margin-top: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
-            text-transform: uppercase; color: var(--on-navy-2); white-space: nowrap; }
-
-  /* Пошук */
-  .film-search { width: min(88%, 430px); background: rgba(237,242,249,.07);
-                 border: 1px solid var(--hair); padding: 11px 14px; flex: none;
-                 font-family: var(--mono); font-size: 13.5px; color: var(--on-navy);
-                 opacity: 0; transform: translateY(-8px); transition: opacity .35s ease, transform .35s ease;
-                 display: flex; align-items: center; gap: 9px; min-height: 42px; }
-  .film-search.on { opacity: 1; transform: none; }
-  .film-search .mag { color: var(--brass-solid); }
-  .film-search .car { display: none; width: 7px; height: 15px; background: var(--brass-solid);
-                      margin-left: 2px; animation: blink 1s step-end infinite; }
-  @keyframes blink { 50% { opacity: 0 } }
-
-  /* Знахідки — власна зона, нижче бази */
-  .hits { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
-          min-height: 32px; margin-top: 22px; width: 100%; }
-  .hit { background: rgba(237,242,249,.09); border: 1px solid var(--hair);
-         border-left: 2px solid var(--brass-solid); padding: 7px 10px;
-         font-family: var(--mono); font-size: 11.5px; color: var(--on-navy);
-         opacity: 0; transform: translateY(-20px) scale(.9);
-         transition: opacity .4s ease, transform .5s cubic-bezier(.3,1.3,.5,1); }
-  .hit.on { opacity: 1; transform: none; }
-
-  /* Готовий документ — окрема зона в самому низу */
-  .final { width: min(90%, 400px); background: var(--paper); color: var(--ink);
-           padding: 13px 15px; opacity: 0; transform: translateY(12px) scale(.96);
-           transition: opacity .45s ease, transform .55s cubic-bezier(.3,1.2,.5,1);
-           display: grid; grid-template-columns: auto 1fr; gap: 13px; align-items: center;
-           min-height: 60px; margin-top: auto; }
-  .final.on { opacity: 1; transform: none; }
-  .final .ic { width: 24px; height: 32px; background: var(--brass-solid); }
-  .final b { display: block; font-size: 14.5px; }
-  .final span { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); margin-top: 2px; }
-
-  .film-cap { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; min-height: 24px; }
-  .film-cap b { font-family: var(--serif); font-size: 18px; }
-  .film-cap span { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--ink-3); }
-  .demo-run { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; }
-  .demo-btn { background: var(--brass-solid); color: var(--on-brass); border: none;
-              font-family: var(--sans); font-weight: 660; font-size: 15.5px;
-              padding: 13px 26px; cursor: pointer; }
-  .demo-btn:disabled { opacity: .55; cursor: default; }
-  @media (max-width: 560px) { .demo-btn { width: 100%; } .film { min-height: 470px; } }
-
-  /* ── Калькулятор ───────────────────────────────────── */
-  .calc { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
-  @media (min-width: 780px) { .calc { grid-template-columns: 1.1fr 1fr; } }
-  .calc-in { background: var(--card); padding: 28px 26px; display: grid; gap: 20px; align-content: start; }
-  .field { display: grid; gap: 7px; }
-  .field label { font-size: 14.5px; color: var(--ink-2); }
-  .field .row { display: flex; align-items: center; gap: 10px; }
-  .field input[type=number] { flex: 1; min-width: 0; font-family: var(--mono); font-size: 17px;
-        padding: 11px 13px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
-  .field .unit { font-family: var(--mono); font-size: 13px; color: var(--ink-3); white-space: nowrap; }
-  .field input[type=range] { width: 100%; accent-color: var(--brass-solid); }
-  .field .rv-val { font-family: var(--mono); font-size: 13px; color: var(--brass); }
-  .calc-out { background: var(--navy); color: var(--on-navy); padding: 28px 26px;
-              display: grid; gap: 18px; align-content: start; }
-  .calc-out .lab { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em;
-                   text-transform: uppercase; color: var(--brass-solid); margin: 0; }
-  .calc-big { font-family: var(--serif); font-size: clamp(34px,6vw,46px); line-height: 1;
-              margin: 0; color: var(--on-navy); font-variant-numeric: tabular-nums; }
-  .calc-row { display: flex; justify-content: space-between; gap: 14px; align-items: baseline;
-              border-top: 1px solid var(--hair); padding-top: 12px; font-size: 14.5px; color: var(--on-navy-2); }
-  .calc-row b { font-family: var(--mono); font-size: 16px; color: var(--on-navy);
-                font-variant-numeric: tabular-nums; }
-  .calc-note { font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em;
-               color: var(--on-navy-2); margin: 0; line-height: 1.5; }
-
-  /* ── Терези: куди йде час юриста ───────────────────── */
-  .scales { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 40px; align-items: center; }
-  @media (max-width: 720px) { .scales { grid-template-columns: 1fr; gap: 26px; } }
-  .scales svg { width: 100%; max-width: 420px; height: auto; display: block; overflow: visible; }
-  .sc-line { stroke: var(--ink-3); stroke-width: 2; fill: none; stroke-linecap: round; }
-  .sc-pan { stroke: var(--brass-solid); stroke-width: 2.5; fill: none; stroke-linecap: round; }
-  .sc-fill { fill: var(--brass-solid); }
-  .sc-fill.muted { fill: var(--ink-3); opacity: .45; }
-  .sc-lab { font-family: var(--sans); font-size: 13px; fill: var(--ink-2); }
-  .beam, .pan-l, .pan-r { transform-box: view-box; }
-  .beam { transform-origin: 180px 54px; animation: tip 6s ease-in-out infinite alternate; }
-  @keyframes tip { from { transform: rotate(-7deg) } to { transform: rotate(7deg) } }
-  .pan-l { animation: panl 6s ease-in-out infinite alternate; }
-  @keyframes panl { from { transform: translateY(15px) } to { transform: translateY(-15px) } }
-  .pan-r { animation: panr 6s ease-in-out infinite alternate; }
-  @keyframes panr { from { transform: translateY(-15px) } to { transform: translateY(15px) } }
-
-  /* Смуги на всю ширину — щоб сторінка не була суцільно білою після шапки */
-  .band { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-  .band.tint { background: var(--tint); }
-  .band section { border-bottom: none; }
-  /* Смуга «Ризик на нашому боці» — світла, з латунною рискою замість темної заливки */
-  .band.warm { background: var(--paper); border-color: var(--brass-solid); }
-
-  .gains { display: grid; gap: 0; border-top: 1px solid var(--rule); }
-  .gain { display: grid; grid-template-columns: 1fr auto; gap: 10px 20px; align-items: baseline; padding: 15px 0; border-bottom: 1px solid var(--rule-2); }
-  .gain b { font-weight: 620; font-size: 15.5px; }
-  .gain .t { font-family: var(--mono); font-size: 14px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .gain .t s { color: var(--ink-3); text-decoration-thickness: 1px; }
-  .gain .t i { font-style: normal; color: var(--brass); font-weight: 700; }
-
-  /* ── Продукти ──────────────────────────────────────── */
-  .prod { background: var(--card); padding: 32px 34px; display: grid; grid-template-columns: 1fr; gap: 18px; }
-  .prod .live { display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--brass); }
-  .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--brass-solid); animation: beat 2.4s ease-in-out infinite; }
-  @keyframes beat { 0%,100% { opacity:.3; transform: scale(.85) } 50% { opacity:1; transform: scale(1) } }
-  .prod h3 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin: 0; }
-  .prod p { margin: 0; color: var(--ink-2); max-width: 62ch; }
-  .prod-figs { display: flex; flex-wrap: wrap; gap: 10px 34px; padding-top: 6px; }
-  .prod-figs div { font-size: 14px; color: var(--ink-2); }
-  .prod-figs b { font-family: var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
-  @media (max-width: 560px) { .prod { padding: 24px 22px; } }
-  .fnode { fill: none; stroke: var(--hair); stroke-width: 1; }
-  .flab { font-family: var(--sans); font-size: 11px; fill: var(--on-navy-2); }
-  .fline { stroke: var(--hair); stroke-width: 1.5; fill: none; }
-  .fdash { stroke: var(--brass-solid); stroke-width: 1.5; fill: none; stroke-dasharray: 5 9; animation: flow 1.6s linear infinite; }
-  @keyframes flow { to { stroke-dashoffset: -14; } }
-  .fdot { fill: var(--brass-solid); }
-  .fpulse { animation: pulse 3.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100% { opacity:.25 } 50% { opacity:1 } }
-
-  /* ── Смуга цифр ────────────────────────────────────── */
-  .stats { background: var(--tint); border-top: 1px solid var(--brass-solid); }
-  .stats-in { display: grid; grid-template-columns: repeat(auto-fit,minmax(158px,1fr)); gap: 1px; background: var(--rule); }
-  .stat { background: var(--paper); padding: 30px 18px; text-align: center; }
-  .stat b { display: block; font-family: var(--serif); font-size: clamp(30px,4.6vw,42px); line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .stat span { display: block; font-size: 13.5px; color: var(--ink-2); margin-top: 9px; }
-  .stats-cap { font-family: var(--mono); font-size: 11px; color: var(--ink-3); text-align: center; padding: 18px 20px 24px; margin: 0; }
-
-  .trust { border-bottom: 1px solid var(--rule); background: var(--tint); }
-  .trust-in { display: flex; flex-wrap: wrap; gap: 12px 40px; padding: 20px 0; font-size: 14.5px; color: var(--ink-2); }
-  .trust-in span::before { content: "—"; color: var(--brass); margin-right: 9px; }
-
-  section { padding: 66px 0; border-bottom: 1px solid var(--rule-2); }
-  h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(27px,3.8vw,38px); line-height: 1.15; letter-spacing: -.015em; margin: 0 0 16px; text-wrap: balance; }
-  h3 { font-size: 16px; font-weight: 660; margin: 0 0 8px; }
-  p { margin: 0 0 16px; text-wrap: pretty; }
-  .lead { font-size: 18px; color: var(--ink-2); margin-bottom: 34px; max-width: 56ch; }
-
-  .pains { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 34px 44px; }
-  .pain h3 { font-family: var(--serif); font-weight: 400; font-size: 20px; letter-spacing: -.01em; }
-  .pain p { margin: 0; color: var(--ink-2); font-size: 15.5px; }
-
-  .steps { border-left: 1px solid var(--rule); padding-left: 32px; display: grid; gap: 40px; }
-  .step { position: relative; }
-  .step::before { content: ""; position: absolute; left: -37px; top: 10px; width: 11px; height: 11px; background: var(--brass-solid); border-radius: 50%; box-shadow: 0 0 0 4px var(--paper); }
-  .step-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; margin-bottom: 8px; }
-  .step-head h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin: 0; letter-spacing: -.01em; }
-  .chip { font-family: var(--mono); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; padding: 4px 10px; background: var(--accent-wash); color: var(--ink); }
-  .chip.free { background: var(--brass-solid); color: var(--on-brass); font-weight: 660; }
-  .step p { margin: 0; color: var(--ink-2); font-size: 15.5px; max-width: 62ch; }
-
-  .cat { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 36px 44px; }
-  .cat-col h3 { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--brass); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
-  .cat-col ul { margin: 0; padding: 0; list-style: none; }
-  .cat-col li { margin-bottom: 15px; font-size: 15px; color: var(--ink-2); }
-  .cat-col li b { display: block; color: var(--ink); font-weight: 620; margin-bottom: 2px; }
-
-  .guar { background: var(--tint); border-left: 3px solid var(--brass-solid); padding: 34px 36px; }
-  .guar h3 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin-bottom: 12px; }
-  .guar p { color: var(--ink-2); max-width: 60ch; }
-  .guar p:last-child { margin-bottom: 0; }
-
-  .pricing { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 18px; }
-  @media (min-width: 760px) { .pricing { grid-template-columns: 1.25fr 1fr; } }
-  .pricing-main { background: var(--card); padding: 30px 28px; }
-  .pricing-main h3 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin: 0 0 12px; letter-spacing: -.01em; }
-  .pricing-main p { color: var(--ink-2); font-size: 15.5px; margin: 0 0 18px; max-width: 46ch; }
-  .pricing-dep { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
-  .pricing-dep li { font-size: 14.5px; color: var(--ink-2); padding-left: 18px; position: relative; }
-  .pricing-dep li::before { content: ""; position: absolute; left: 0; top: 9px; width: 7px; height: 1px; background: var(--brass-solid); }
-  .pricing-side { background: var(--tint); padding: 30px 26px; display: grid; gap: 16px; align-content: start; }
-  .scope b { display: block; font-size: 15.5px; font-weight: 620; margin-bottom: 2px; }
-  .scope span { display: block; font-size: 14px; color: var(--ink-2); }
-  .packs { display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 18px; }
-  .pack { background: var(--card); padding: 30px 24px; display: flex; flex-direction: column; }
-  .pack.mid { background: var(--accent-wash); }
-  .pick { font-family: var(--mono); font-size: 10.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--brass); margin: 0 0 12px; }
-  .pack h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin-bottom: 12px; letter-spacing: -.01em; }
-  .pack .who-t { font-size: 14.5px; color: var(--ink-2); margin-bottom: 22px; flex-grow: 1; }
-  .pack .price { font-family: var(--serif); font-size: 28px; color: var(--ink); margin: 0; letter-spacing: -.01em; }
-  .pack .term { font-size: 13px; color: var(--ink-3); margin: 6px 0 0; }
-  .price sup { font-size: 13px; color: var(--ink-3); }
-  .star { font-size: 13.5px; color: var(--ink-3); margin: 0 0 24px; }
-
-  .scroll { overflow-x: auto; margin-bottom: 18px; }
-  table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 430px; }
-  th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); font-weight: 660; padding: 0 16px 11px 0; border-bottom: 1px solid var(--ink); white-space: nowrap; }
-  td { padding: 13px 16px 13px 0; border-bottom: 1px solid var(--rule-2); vertical-align: top; }
-  td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  td.pr { font-weight: 660; }
-  caption { caption-side: bottom; text-align: left; font-size: 13px; color: var(--ink-3); padding-top: 12px; }
-
-  .note { background: var(--tint); padding: 24px 26px; }
-  .note p:last-child { margin-bottom: 0; }
-  .note-t { font-weight: 660; margin: 0 0 8px; }
-
-  .split { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 30px 44px; }
-  .split h3 { font-family: var(--serif); font-weight: 400; font-size: 19px; }
-  .split p { margin: 0; font-size: 15.5px; color: var(--ink-2); }
-
-  .contact {
-    background:
-      repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 28px),
-      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 28px),
-      var(--navy);
-    color: var(--on-navy); padding: 72px 0 78px; border-top: 1px solid var(--brass-solid);
-  }
-  .contact h2 { color: var(--on-navy); }
-  .contact .lead { color: var(--on-navy-2); }
-  /* Один шлях замість трьох: телефон і пошта прибрані навмисно —
-     вибір із трьох способів звʼязку зменшує кількість звернень. */
-  .cta-card { background: var(--navy-2); border: 1px solid var(--hair); padding: 32px 30px; display: grid; gap: 24px; justify-items: start; max-width: 620px; }
-  .btn-lg { font-size: 17px; padding: 17px 34px; }
-  .cta-steps { margin: 0; padding-left: 22px; display: grid; gap: 11px; font-size: 15px; color: var(--on-navy-2); }
-  .cta-steps li::marker { color: var(--brass-solid); font-family: var(--mono); font-size: 12.5px; }
-  .cta-steps b { color: var(--on-navy); font-weight: 620; }
-  @media (max-width: 560px) { .cta-card { padding: 24px 20px; } .btn-lg { width: 100%; text-align: center; } }
-
-  /* Другий рівень: телефон і пошта. Telegram лишається головною дією,
-     але відсутність телефона на сторінці підриває довіру — тому вони тут. */
-  .alt-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--on-navy-2); margin: 34px 0 14px; }
-  .alt-ways { display: grid; grid-template-columns: repeat(auto-fit,minmax(238px,1fr)); gap: 1px; background: var(--hair); border: 1px solid var(--hair); }
-  .alt { background: var(--navy); padding: 24px 22px; }
-  .alt .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--brass-solid); margin: 0 0 10px; }
-  .alt b { display: block; font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--on-navy); margin-bottom: 9px; }
-  .alt b a { color: var(--on-navy); text-decoration: none; border-bottom: 1px solid var(--brass-solid); }
-  .alt b.mail { font-size: 17px; }
-  .alt b.mail a { word-break: break-all; }
-  .alt p { margin: 0; font-size: 14.5px; color: var(--on-navy-2); }
-  .contact-foot { margin: 30px 0 0; font-size: 14.5px; color: var(--on-navy-2); }
-
-  /* ── Відгуки ──────────────────────────────────────── */
-  .revs-sum { display: flex; flex-wrap: wrap; gap: 14px 44px; margin: 0 0 30px;
-              padding-bottom: 26px; border-bottom: 1px solid var(--rule); }
-  .revs-sum div { display: flex; align-items: baseline; gap: 10px; }
-  .revs-sum b { font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--ink);
-                font-variant-numeric: tabular-nums; }
-  .revs-sum span { font-size: 13.5px; color: var(--ink-2); max-width: 20ch; }
-  .revs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(290px, 340px); align-items: start;
-          gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
-          padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
-  .tg { scroll-snap-align: start; background: #E7EBF0; border: 1px solid var(--rule);
-        display: grid; align-content: start; overflow: hidden; }
-  .tg-bar { background: #FFFFFF; border-bottom: 1px solid #D8DEE6; padding: 12px 14px;
-            display: grid; grid-template-columns: auto 1fr; gap: 11px; align-items: center; }
-  .tg-av { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
-           color: #fff; font-weight: 620; font-size: 16px; }
-  .tg-id b { display: block; font-size: 14.5px; font-weight: 620; color: #10161F; line-height: 1.25; }
-  .tg-id span { display: block; font-size: 12.5px; color: #6B7683; line-height: 1.3; }
-  .tg-chat { padding: 14px 12px 16px; display: grid; gap: 8px; justify-items: start;
-             background-image: radial-gradient(circle at 20% 30%, rgba(120,150,190,.10) 0 2px, transparent 2px),
-                               radial-gradient(circle at 70% 75%, rgba(120,150,190,.08) 0 2px, transparent 2px);
-             background-size: 90px 90px; }
-  .tg-msg { background: #FFFFFF; border-radius: 12px 12px 12px 4px; padding: 10px 12px 8px;
-            font-size: 14.5px; line-height: 1.5; color: #10161F; max-width: 100%;
-            box-shadow: 0 1px 1px rgba(16,22,31,.09); position: relative; }
-  .tg-msg + .tg-msg { border-radius: 12px; }
-  .tg-res { color: #1B6E4B; font-weight: 660; }
-  .tg-meta { float: right; margin: 6px 0 0 10px; font-size: 11px; color: #8A949F;
-             display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
-  .tg-tick { color: #3E90D8; letter-spacing: -3px; font-size: 12px; }
-  .revs-nav { display: flex; gap: 8px; margin-top: 20px; }
-  .rev-btn { font-family: var(--mono); font-size: 16px; background: transparent;
-             border: 1px solid var(--rule); color: var(--ink-2); width: 44px; height: 44px; cursor: pointer; }
-  .rev-btn:hover { border-color: var(--brass-solid); color: var(--ink); }
-  @media (max-width: 660px) {
-    .revs { grid-auto-columns: 86%; }
-    .revs-nav { display: none; }
-    .revs-sum { gap: 12px 26px; }
-    .revs-sum b { font-size: 25px; }
-  }
-
-  /* Плаваюча кнопка запису. Зʼявляється після шапки (там кнопка вже є)
-     і зникає на блоці контактів (там людина вже дійшла). */
-  .dock {
-    position: fixed; z-index: 40;
-    background: var(--navy-2); border: 1px solid var(--brass-solid);
-    display: grid; gap: 10px;
-    opacity: 0; pointer-events: none; transform: translateY(14px);
-    transition: opacity .3s ease, transform .3s ease;
-  }
-  .dock.in { opacity: 1; pointer-events: auto; transform: none; }
-  .dock-t { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--brass-solid); margin: 0; }
-  .dock-b { display: block; background: var(--brass-solid); color: var(--on-brass); text-align: center; font-weight: 660; font-size: 15.5px; padding: 13px 24px; text-decoration: none; }
-  /* Десктоп — компактна картка в кутку, щоб не заважала читати */
-  @media (min-width: 661px) {
-    .dock { right: 24px; bottom: 24px; width: 286px; padding: 18px; }
-  }
-  /* Телефон — смуга на всю ширину, під великим пальцем */
-  @media (max-width: 660px) {
-    .dock { left: 0; right: 0; bottom: 0; border-left: none; border-right: none; border-bottom: none;
-            padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
-    .dock-t { text-align: center; }
-  }
-
-  footer.bot { padding: 26px 0 44px; font-size: 13.5px; color: var(--ink-3); }
-  a { color: var(--accent); }
-  :focus-visible { outline: 2px solid var(--brass-solid); outline-offset: 3px; }
-
-  /* ── Поява при прокручуванні ───────────────────────── */
-  .rv { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
-  .rv.in { opacity: 1; transform: none; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .rv { opacity: 1; transform: none; transition: none; }
-    .fdash, .fpulse, .dot-live { animation: none; }
-    .demo-out { animation: none; }
-    .demo-fill { transition: none; }
-    .beam, .pan-l, .pan-r { animation: none; }
-    .dock { transition: none; }
-    .beam { transform: rotate(-4deg); }
-    .pan-l { transform: translateY(9px); }
-    .pan-r { transform: translateY(-9px); }
-  }
-  /* ── Вузькі екрани: без горизонтального гортання ──────
-     Колонки сітки за замовчуванням не стискаються вужче за вміст
-     (поле введення має «природну» ширину), тому явно дозволяємо їм
-     стискатися; на найвужчих телефонах час переноситься під назву. */
-  @media (max-width: 779px) {
-    .calc, .calc-in, .field { grid-template-columns: minmax(0, 1fr); }
-  }
-  @media (max-width: 720px) { .scales { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 380px) { .gain { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
-  @media (max-width: 560px) {
-    .hero { padding: 62px 0 54px; }
-    .brand { width: 140px; }
-    .brand-row { gap: 14px; }
-    .guar { padding: 26px 22px; }
-    .flow { margin-top: 40px; }
-  }
-</style>
 </head>
 <body>
-<div class="hero">
-  <div class="wrap">
-    <div class="brand-row">
-      <p class="eyebrow">Послуги для юридичної практики</p>
-      <img class="brand" src="/logo-light.png" width="966" height="185" alt="ORBITA IX" decoding="async">
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+<header class="header">
+  <div class="container">
+    <a class="logo" href="#"><img src="img/orbita-ix-logo.png" alt="ORBITA IX" width="165" height="32"></a>
+  </div>
+</header>
+
+<main>
+
+<!-- 1. HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">Для юридичних компаній і юристів із власною практикою</div>
+      <h1>Автоматизація юридичної практики за допомогою штучного інтелекту</h1>
+      <p class="hero-lead">Ми розбираємо реальні процеси вашої агенції, знаходимо задачі, які команда постійно виконує вручну, та впроваджуємо AI безпосередньо у вашу практику.</p>
+      <a class="btn large" href="#contact">Записатися на безкоштовний розбір</a>
+      
     </div>
-    <div class="rule-sm"></div>
-    <h1>Автоматизація юридичних бізнес-процесів</h1>
-    <p class="lede">Прибираємо ручну роботу з практики, щоб час юриста йшов на справи — а не на нагадування, таблиці й пошук документів.</p>
-    <div class="actions">
-      <a class="btn" href="#next" data-cta="hero">Безкоштовний розбір процесів</a>
-      <a class="btn-ghost" href="#how">Як це відбувається</a>
-    </div>
 
-    <div class="flow">
-      <p class="flow-cap">Так виглядає автоматизований контур</p>
-      <svg viewBox="0 0 720 76" class="flow-h" role="img" aria-label="Схема: звернення стає карткою клієнта, далі документом, далі рахунком">
-        <g class="fnode">
-          <rect x="2"   y="26" width="132" height="44"/>
-          <rect x="196" y="26" width="132" height="44"/>
-          <rect x="390" y="26" width="132" height="44"/>
-          <rect x="584" y="26" width="134" height="44"/>
-        </g>
-        <g class="flab" text-anchor="middle">
-          <text x="68"  y="53">Звернення</text>
-          <text x="262" y="53">Картка клієнта</text>
-          <text x="456" y="53">Документ</text>
-          <text x="651" y="53">Рахунок</text>
-        </g>
-        <g>
-          <line class="fline" x1="134" y1="48" x2="196" y2="48"/>
-          <line class="fdash" x1="134" y1="48" x2="196" y2="48"/>
-          <line class="fline" x1="328" y1="48" x2="390" y2="48"/>
-          <line class="fdash" x1="328" y1="48" x2="390" y2="48"/>
-          <line class="fline" x1="522" y1="48" x2="584" y2="48"/>
-          <line class="fdash" x1="522" y1="48" x2="584" y2="48"/>
-        </g>
-        <g class="fdot">
-          <circle class="fpulse" cx="165" cy="48" r="3"/>
-          <circle class="fpulse" cx="359" cy="48" r="3" style="animation-delay:.9s"/>
-          <circle class="fpulse" cx="553" cy="48" r="3" style="animation-delay:1.8s"/>
-        </g>
-      </svg>
-
-      <svg viewBox="0 0 320 430" class="flow-v" role="img" aria-label="Схема: звернення стає карткою клієнта, далі документом, далі рахунком">
-        <g class="fnode">
-          <rect x="1" y="1"   width="318" height="60"/>
-          <rect x="1" y="123" width="318" height="60"/>
-          <rect x="1" y="245" width="318" height="60"/>
-          <rect x="1" y="367" width="318" height="60"/>
-        </g>
-        <g class="flab-v" text-anchor="middle">
-          <text x="160" y="37">Звернення</text>
-          <text x="160" y="159">Картка клієнта</text>
-          <text x="160" y="281">Документ</text>
-          <text x="160" y="403">Рахунок</text>
-        </g>
-        <g>
-          <line class="fline" x1="160" y1="61"  x2="160" y2="123"/>
-          <line class="fdash" x1="160" y1="61"  x2="160" y2="123"/>
-          <line class="fline" x1="160" y1="183" x2="160" y2="245"/>
-          <line class="fdash" x1="160" y1="183" x2="160" y2="245"/>
-          <line class="fline" x1="160" y1="305" x2="160" y2="367"/>
-          <line class="fdash" x1="160" y1="305" x2="160" y2="367"/>
-        </g>
-        <g class="fdot">
-          <circle class="fpulse" cx="160" cy="92"  r="3.5"/>
-          <circle class="fpulse" cx="160" cy="214" r="3.5" style="animation-delay:.9s"/>
-          <circle class="fpulse" cx="160" cy="336" r="3.5" style="animation-delay:1.8s"/>
-        </g>
-      </svg>
-
+    <div class="offer-card">
+      <span class="offer-badge">Безкоштовно</span>
+      <p class="offer-lbl">Наша пропозиція</p>
+      <h2>Година розбору ваших процесів зі спеціалістом з AI-автоматизації</h2>
+      <p>На виході ви отримуєте готовий розрахунок: скільки годин на місяць забирає ручна робота і що з цього можна автоматизувати.</p>
+      <ul class="checks">
+        <li><span class="check">✓</span><span>Проходимо ваші процеси від звернення клієнта до рахунку</span></li>
+        <li><span class="check">✓</span><span>Рахуємо години ручної роботи по кожному з них</span></li>
+        <li><span class="check">✓</span><span>Показуємо, що можна прибрати і з чого почати</span></li>
+      </ul>
+      <p class="keep-note">Розрахунок лишається у вас, навіть якщо ви нічого не замовите.</p>
     </div>
   </div>
-</div>
 
-<div class="stats">
-  <div class="wrap" style="padding:0 24px">
-    <div class="stats-in">
-      <div class="stat"><b data-to="27" data-suffix=" млн">0</b><span>документів обробляють наші автоматизації</span></div>
-      <div class="stat"><b data-to="136" data-suffix=" млн">0</b><span>записів у базах, які ми побудували</span></div>
-      <div class="stat"><b data-to="0" data-suffix="" data-static="24/7">0</b><span>процеси працюють без участі людини</span></div>
-      <div class="stat"><b data-to="1" data-suffix=" год">0</b><span>і у вас на руках розрахунок по вашій компанії</span></div>
+</section>
+
+<!-- 2. ДЕ ГУБИТЬСЯ ЧАС: «що ламається → що робимо натомість» -->
+<section class="section" id="breaks">
+  <div class="container">
+    <div class="kicker">Вам знайома наступна проблема?</div>
+    <h2 class="section-title">Рутинна робота юристів забирає дорогоцінний час</h2>
+    <p class="section-sub">Види рутини, які часто повторюються у вашій практиці. Саме тому їх можна прибрати.</p>
+    <div class="bk-head" aria-hidden="true">
+      <p class="bk-h bad"><svg class="bk-i" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Що ламається</p>
+      <span></span>
+      <p class="bk-h good"><svg class="bk-i" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Що робимо натомість</p>
     </div>
-    <p class="stats-cap">Цифри з наших діючих систем</p>
+    <div class="bk sl-track" id="bk" data-slider="Ситуація">
+      <div class="bk-row" data-pain="Звернення чекають відповіді">
+        <div class="bk-l"><p class="bk-k">01 · Звернення чекають відповіді</p><p class="bk-t"><span>Клієнт пише в месенджер увечері, юрист відповідає наступного дня. Факти й документи збираються в хаотичній переписці.</span></p><p class="bk-cost"><b>Чому це дорого</b>Клієнт іде до того, хто відповів першим. А години на нецільові звернення ніхто не оплачує.</p></div>
+        <span class="bk-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        <button type="button" class="bk-r" aria-pressed="false"><span class="bk-chk" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="bk-rt">Бот у Telegram чи Viber відповідає за хвилини, ставить уточнювальні питання й приймає документи. Конфлікт інтересів перевіряє юрист.</span><span class="visually-hidden"> Позначити: це болить нам</span></button>
+      </div>
+      <div class="bk-row" data-pain="Ті самі дані в пʼяти місцях">
+        <div class="bk-l"><p class="bk-k">02 · Ті самі дані в пʼяти місцях</p><p class="bk-t"><span>Імʼя й реквізити клієнта вручну переносять у таблицю, договір, картку справи, календар і рахунок.</span></p><p class="bk-cost"><b>Чому це дорого</b>Кожне перенесення дає шанс на помилку в реквізитах, а клієнт за цю роботу не платить.</p></div>
+        <span class="bk-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        <button type="button" class="bk-r" aria-pressed="false"><span class="bk-chk" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="bk-rt">Дані вносяться один раз і самі потрапляють у договір, картку справи, календар і рахунок.</span><span class="visually-hidden"> Позначити: це болить нам</span></button>
+      </div>
+      <div class="bk-row" data-pain="Документи з копії старої справи">
+        <div class="bk-l"><p class="bk-k">03 · Документи з копії старої справи</p><p class="bk-t"><span>Договори, ордери й позови щоразу збирають із попередніх файлів, а в кожного юриста своя версія шаблону.</span></p><p class="bk-cost"><b>Чому це дорого</b>У тексті лишаються чужі реквізити й суми, а умови договорів різняться без причини.</p></div>
+        <span class="bk-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        <button type="button" class="bk-r" aria-pressed="false"><span class="bk-chk" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="bk-rt">Затверджені шаблони заповнюються з картки справи. Юрист перевіряє готовий проєкт.</span><span class="visually-hidden"> Позначити: це болить нам</span></button>
+      </div>
+      <div class="bk-row" data-pain="Строки в календарях і памʼяті">
+        <div class="bk-l"><p class="bk-k">04 · Строки в календарях і памʼяті</p><p class="bk-t"><span>Дати засідань і процесуальні строки живуть в особистих календарях, таблицях і нотатках.</span></p><p class="bk-cost"><b>Чому це дорого</b>Пропущений строк означає втрачене право на оскарження і професійну відповідальність.</p></div>
+        <span class="bk-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        <button type="button" class="bk-r" aria-pressed="false"><span class="bk-chk" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="bk-rt">Строки рахуються від дати події. Нагадування приходять за тиждень, три дні й день, а без реакції сигнал отримує помічник чи партнер.</span><span class="visually-hidden"> Позначити: це болить нам</span></button>
+      </div>
+      <div class="bk-row" data-pain="Пошук практики вручну">
+        <div class="bk-l"><p class="bk-k">05 · Пошук практики вручну</p><p class="bk-t"><span>Години йдуть на пошук, відбір і первинний аналіз судових рішень по кожній справі.</span></p><p class="bk-cost"><b>Чому це дорого</b>Більша частина часу йде не на аналіз, а на відсіювання нерелевантних рішень.</p></div>
+        <span class="bk-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        <button type="button" class="bk-r" aria-pressed="false"><span class="bk-chk" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="bk-rt">Практика підбирається за обставинами справи, окремо по трьох інстанціях, з посиланням на кожне рішення.</span><span class="visually-hidden"> Позначити: це болить нам</span></button>
+      </div>
+      <div class="bk-row" data-pain="Години по памʼяті, рахунки із запізненням">
+        <div class="bk-l"><p class="bk-k">06 · Години по памʼяті, рахунки із запізненням</p><p class="bk-t"><span>Години збирають наприкінці місяця, рахунки виставляють нерегулярно, про оплату нагадують вручну або не нагадують.</span></p><p class="bk-cost"><b>Чому це дорого</b>Незаписана година означає втрачений дохід. Пізній рахунок і оплачують пізно.</p></div>
+        <span class="bk-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        <button type="button" class="bk-r" aria-pressed="false"><span class="bk-chk" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="bk-rt">Години фіксуються по справах, рахунки йдуть за графіком, нагадування про оплату надсилаються самі, а партнер щотижня бачить дебіторку.</span><span class="visually-hidden"> Позначити: це болить нам</span></button>
+      </div>
+      <div class="bk-row" data-pain="Як там моя справа?">
+        <div class="bk-l"><p class="bk-k">07 · «Як там моя справа?»</p><p class="bk-t"><span>Клієнти регулярно питають про статус. Юрист щоразу відкриває справу, перевіряє і відповідає вручну.</span></p><p class="bk-cost"><b>Чому це дорого</b>Кожен такий дзвінок відриває від роботи, а брак інформації найчастіше дратує клієнтів.</p></div>
+        <span class="bk-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        <button type="button" class="bk-r" aria-pressed="false"><span class="bk-chk" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="bk-rt">Клієнт отримує коротке повідомлення про ключові етапи: документ подано, засідання призначено. Без конфіденційних подробиць.</span><span class="visually-hidden"> Позначити: це болить нам</span></button>
+      </div>
+    </div>
+    <div class="bk-sum" id="painSum" aria-live="polite">
+      <p><b id="painCount">0 з 7</b><span id="painText">Натисніть на рішення, яке вам потрібне. З цього почнемо розбір.</span></p>
+      <a class="btn" href="#contact">Записатися на безкоштовний розбір</a>
+    </div>
+    <div class="bk-more">
+      <div class="bk-more-col">
+        <p class="bk-more-t" id="bkMoreL">Новий клієнт пише у вівторок увечері. Зранку помічник переносить його дані в таблицю звернень, потім у договір у Word, у картку справи й у рахунок. Дату першого засідання записує в календар і ще раз у спільну таблицю. Якщо щось змінилося, правити доводиться в пʼяти місцях, а помилку в реквізитах помічають, коли договір уже на підписі.</p>
+        <button type="button" class="bk-more-b" aria-expanded="false" aria-controls="bkMoreL">Читати далі</button>
+      </div>
+      <div class="bk-more-col">
+        <p class="bk-more-t" id="bkMoreR">Ми починаємо з розбору: рахуємо, куди насправді йдуть години команди, і автоматизуємо кроки, що повторюються в кожній справі. Дані клієнта вносяться один раз і самі потрапляють у договір, картку справи, календар і рахунок. Строки рахуються від дати події, а керівник щотижня отримує зведення. Юрист перевіряє результат і ухвалює рішення.</p>
+        <button type="button" class="bk-more-b" aria-expanded="false" aria-controls="bkMoreR">Читати далі</button>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="trust">
-  <div class="wrap">
-    <div class="trust-in">
-      <span>Перша година — безкоштовно</span>
-      <span>Розрахунок лишається у вас</span>
-      <span>Нерозголошення до початку робіт</span>
-      <span>Усе оформлюється на вашу компанію</span>
+<!-- 2а. ВІДЕО: КОРОТКО, ЩО МИ ПРОПОНУЄМО (YouTube або Vimeo) -->
+<section class="section video-block" id="video">
+  <div class="container">
+    <div class="kicker">Відео</div>
+    <h2 class="section-title">Коротко про те, що ми пропонуємо</h2>
+   
+    <div class="vplayer" id="vplayer" data-video="https://www.youtube.com/watch?v=5YyZ82BD--A">
+      <button type="button" class="vplay" id="vplay" aria-label="Дивитися відео">
+        <span class="vplay-btn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span>
+        <span class="vplay-label">Дивитися відео</span>
+      </button>
     </div>
   </div>
-</div>
+</section>
 
-<div class="band tint">
-  <div class="wrap">
-  <section class="rv">
-    <h2>Ваші документи стають базою, яка працює</h2>
-    <p class="lead">Договори, акти й заяви, що вже накопичились у компанії, зводяться в одну базу. Далі потрібне формулювання знаходиться за секунди — і новий документ збирається з ваших же напрацювань.</p>
-    <div class="film-wrap">
-      <div class="film" id="film">
-        <div class="film-search" id="filmSearch"><span class="mag">&#9906;</span><span id="filmQuery"></span><span class="car" id="filmCar"></span></div>
-        <div class="db" id="filmDb">
-          <div class="db-cap b"></div>
-          <div class="db-side"></div>
-          <div class="db-fill" id="filmFill"></div>
-          <div class="db-cap t"></div>
-          <div class="db-lab" id="filmDbLab">база компанії</div>
-        </div>
-        <div class="hits" id="filmHits"></div>
-        <div class="final" id="filmFinal">
-          <span class="ic"></span>
-          <div><b>Договір поставки — проєкт готовий</b><span>зібрано з ваших же формулювань · 6 сторінок</span></div>
-        </div>
+<!-- 3. ДЛЯ КОГО: ДВА ШЛЯХИ -->
+<section class="section tint">
+  <div class="container">
+    <div class="kicker">Для кого</div>
+    <h2 class="section-title">Працюємо з командами і з юристами, які працюють самостійно</h2>
+    <p class="section-sub">Розбір однаковий для всіх. Різниться масштаб того, що автоматизуємо далі.</p>
+    <div class="paths">
+      <div class="path">
+        <span class="path-bg"><svg class="bg-ic" viewBox="0 0 24 24" width="240" height="240" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 9l10-6 10 6"/><path d="M3 9h18"/><path d="M5 9v9M9.5 9v9M14.5 9v9M19 9v9"/><path d="M3 18h18M2 21h20"/></svg></span>
+        <span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 9l10-6 10 6"/><path d="M3 9h18"/><path d="M5 9v9M9.5 9v9M14.5 9v9M19 9v9"/><path d="M3 18h18M2 21h20"/></svg></span>
+        <h3>Юридична компанія або адвокатське обʼєднання</h3>
+        <p>Рутина множиться на кількість юристів. Автоматизуємо процеси всієї команди, від прийому звернень до рахунків, щоб знання й порядок роботи трималися на системі, а не на окремих людях.</p>
+        <a class="btn" href="#contact" data-audience="company">Записатися на безкоштовний розбір</a>
       </div>
-      <p class="film-cap"><b id="filmCap">Натисніть, щоб подивитись</b><span id="filmSub"></span></p>
-      <div class="demo-run">
-        <button class="demo-btn" id="demoBtn" type="button">Показати, як це працює</button>
+      <div class="path">
+        <span class="path-bg"><svg class="bg-ic" viewBox="0 0 24 24" width="240" height="240" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 8h20v12H2z"/><path d="M8 8V4h8v4"/><path d="M2 13h20"/><path d="M11 12v3h2v-3"/></svg></span>
+        <span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 8h20v12H2z"/><path d="M8 8V4h8v4"/><path d="M2 13h20"/><path d="M11 12v3h2v-3"/></svg></span>
+        <h3>Юрист або адвокат</h3>
+        <p>Коли ви самі собі юрист, секретар і бухгалтер, кожна година на рутину забирає годину в роботи з клієнтами. Починаємо з одного процесу, який зʼїдає у вас найбільше часу.</p>
+        <a class="btn" href="#contact" data-audience="solo">Записатися на безкоштовний розбір</a>
       </div>
     </div>
-  </section>
   </div>
-</div>
+</section>
 
-<div class="wrap">
-
-  <section class="rv">
-    <h2>Що ми зазвичай бачимо в практиці</h2>
-    <p class="lead">Ці чотири речі повторюються майже в кожній компанії, незалежно від розміру.</p>
-    <div class="pains">
-      <div class="pain"><h3>Строки живуть у голові</h3><p>Дати засідань і процесуальні строки тримаються в памʼяті та в таблиці, яку хтось має не забути оновити.</p></div>
-      <div class="pain"><h3>Про рішення дізнаються пізно</h3><p>У справі клієнта зʼявилось нове рішення — а компанія бачить його через тиждень, випадково.</p></div>
-      <div class="pain"><h3>Ті самі документи щоразу заново</h3><p>Договори, довіреності, заяви переписуються вручну, хоча відрізняються трьома полями.</p></div>
-      <div class="pain"><h3>Місяць закривається руками</h3><p>Хто скільки відпрацював, що виставлено, що оплачено — щоразу окрема вечірня робота.</p></div>
-    </div>
-  </section>
-
-  <section id="how" class="rv">
-    <h2>Як ми працюємо</h2>
-    <p class="lead">Чотири кроки. Перший нічого не коштує й ні до чого не зобовʼязує — після нього у вас на руках залишається розрахунок, навіть якщо ви нічого не замовите.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-head"><h3>Розбір процесів</h3><span class="chip free">безкоштовно</span></div>
-        <p>Година розмови. Розкладаємо роботу компанії на процеси й по кожному рахуємо, скільки годин на місяць забирає ручна частина. На виході — сторінка: що можна прибрати, скільки часу це вивільняє, з чого варто починати.</p>
-      </div>
-      <div class="step">
-        <div class="step-head"><h3>Проєктна консультація</h3><span class="chip">за потреби</span></div>
-        <p>Якщо після розбору видно, що процесів багато й вони повʼязані — робимо детальну карту: послідовність впровадження, що з чим стикується, скільки це займе. Платна, але зараховується у вартість подальших робіт.</p>
-      </div>
-      <div class="step">
-        <div class="step-head"><h3>Впровадження</h3><span class="chip">від А до Я</span></div>
-        <p>Беремо на себе все: налаштування, підключення до систем, у яких ви вже працюєте, перенесення даних, навчання співробітників. Ви не отримуєте інструкцію — ви отримуєте те, що працює.</p>
-      </div>
-      <div class="step">
-        <div class="step-head"><h3>Підтримка</h3><span class="chip">на вибір</span></div>
-        <p>Далі або ведемо ми, або передаємо вам разом із доступами й навчанням. Обидва варіанти рівноцінні — вибір за вами, не за нами.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="rv">
-    <h2>Що можемо автоматизувати</h2>
-    <p class="lead">Починаємо з того процесу, який забирає найбільше часу саме у вас — це видно вже на першому розборі. Перелік не закритий.</p>
-    <div class="cat">
-      <div class="cat-col">
-        <h3>Строки й справи</h3>
-        <ul>
-          <li><b>Нагадування про засідання та строки</b>Рахуються від дати події, приходять завчасно в месенджер і календар.</li>
-          <li><b>Стеження за справами клієнтів</b>Нове рішення у справі помічається того ж дня.</li>
-          <li><b>Перевірка контрагента</b>Один запит замість кількох реєстрів, готовий звіт.</li>
-        </ul>
-      </div>
-      <div class="cat-col">
-        <h3>Клієнти й документи</h3>
-        <ul>
-          <li><b>Прийом звернень</b>Заявка стає карткою клієнта й одразу потрапляє до потрібного юриста.</li>
-          <li><b>Документи з шаблонів</b>Заповнюються з картки справи, а не переписуються.</li>
-          <li><b>Пошук по архіву компанії</b>Знайти власний документ за змістом, а не за назвою файлу.</li>
-        </ul>
-      </div>
-      <div class="cat-col">
-        <h3>Гроші й керування</h3>
-        <ul>
-          <li><b>Облік часу й рахунки</b>Години перетворюються на рахунок, несплачені нагадують про себе самі.</li>
-          <li><b>Зведення для керівника</b>Щотижня: справи в роботі, години, виставлено, оплачено.</li>
-          <li><b>Обмін даними між системами</b>Щоб те саме не вносилось двічі.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-</div>
-
-<div class="band tint">
-  <div class="wrap">
-  <section class="rv">
-    <h2>Куди йде час юриста</h2>
-    <p class="lead">У практиці завжди дві чаші: робота, за яку платять, і рутина, яка з’їдає день. Автоматизація не додає годин — вона переносить вагу з однієї чаші на іншу.</p>
-
-    <div class="scales">
-      <svg viewBox="0 0 360 210" role="img" aria-label="Терези: чаша рутини легшає, чаша роботи зі справами важчає">
-        <g class="sc-line">
-          <line x1="180" y1="54" x2="180" y2="168"/>
-          <line x1="140" y1="176" x2="220" y2="176"/>
-          <path d="M158 168 L180 158 L202 168"/>
-        </g>
-        <g class="beam">
-          <line class="sc-line" x1="60" y1="54" x2="300" y2="54"/>
-          <circle class="sc-fill" cx="180" cy="54" r="5"/>
-        </g>
-        <g class="pan-l">
-          <line class="sc-line" x1="60" y1="54" x2="60" y2="96"/>
-          <path class="sc-pan" d="M22 96 Q60 130 98 96"/>
-          <g class="sc-fill muted">
-            <rect x="42" y="82" width="36" height="7" rx="1"/>
-            <rect x="48" y="72" width="24" height="7" rx="1"/>
-            <rect x="52" y="62" width="16" height="7" rx="1"/>
-          </g>
-        </g>
-        <g class="pan-r">
-          <line class="sc-line" x1="300" y1="54" x2="300" y2="96"/>
-          <path class="sc-pan" d="M262 96 Q300 130 338 96"/>
-          <g class="sc-fill">
-            <rect x="282" y="82" width="36" height="7" rx="1"/>
-            <rect x="288" y="72" width="24" height="7" rx="1"/>
-          </g>
-        </g>
-        <g class="sc-lab" text-anchor="middle">
-          <text x="60" y="198">Рутина</text>
-          <text x="300" y="198">Робота зі справами</text>
-        </g>
-      </svg>
-
-      <div>
-        <div class="gains">
-          <div class="gain"><b>Строки й нагадування</b><span class="t"><s>5 год</s> → <i>20 хв</i> / тиждень</span></div>
-          <div class="gain"><b>Типові документи</b><span class="t"><s>4 год</s> → <i>40 хв</i> / тиждень</span></div>
-          <div class="gain"><b>Закриття місяця</b><span class="t"><s>6 год</s> → <i>30 хв</i> / місяць</span></div>
-        </div>
-        <p style="margin-top:22px;color:var(--ink-3);font-size:14px">Це приклад розрахунку, а не обіцянка: на безкоштовному розборі ми рахуємо саме ваші числа — по ваших процесах і вашій команді.</p>
-      </div>
-    </div>
-  </section>
-
-  </div>
-</div>
-
-<div class="wrap">
-  <section class="rv">
-    <h2>Порахуйте свою економію</h2>
-    <p class="lead">Введіть свої числа — і побачите, у що обходиться ручна робота вашій компанії щомісяця. Це оцінка: точну частку рахуємо на безкоштовному розборі.</p>
-    <div class="calc">
-      <div class="calc-in">
-        <div class="field">
-          <label for="cRate">Скільки коштує година роботи вашого юриста</label>
-          <div class="row">
-            <input type="number" id="cRate" value="900" min="0" step="50" inputmode="numeric">
-            <span class="unit">₴ / год</span>
+<!-- 4. ДЕМОНСТРАЦІЯ: РОЗГАЛУЖЕННЯ ЧЕРЕЗ ОРКЕСТРАТОР -->
+<section class="section">
+  <div class="container demo-grid">
+    <div>
+      <p class="example-label">Приклад процесу автоматизації</p>
+      <div class="wf of" id="of">
+        <p class="wf-k">Як працює автоматизація</p>
+        <div class="of-map" id="ofMap">
+          <svg class="of-lines" id="ofLines" aria-hidden="true"></svg>
+          <span class="of-dot" id="ofDot" aria-hidden="true"></span>
+          <div class="of-col of-c1"><div class="of-node of-task" data-k="task"><b>Задача</b><span>Перевірити строки</span></div></div>
+          <div class="of-col of-c2"><div class="of-node of-orch" data-k="orch"><b>Оркестратор</b><span class="of-mono">n8n, Make, Zapier<br>або власний код</span></div></div>
+          <div class="of-col of-c3">
+            <div class="of-node of-ex" data-k="ai"><b>AI-модель</b><span>аналіз і текст</span></div>
+            <div class="of-node of-ex" data-k="doc"><b>Документи</b><span>шаблони</span></div>
+            <div class="of-node of-ex" data-k="app"><b>Ваші програми</b><span>CRM, облік, таблиці</span></div>
+            <div class="of-node of-ex" data-k="msg"><b>Пошта й месенджери</b><span>повідомлення</span></div>
           </div>
+          <div class="of-col of-c4"><div class="of-node of-res" data-k="res"><b>Результат</b><span id="ofResS">очікує</span></div></div>
         </div>
-        <div class="field">
-          <label for="cHours">Скільки годин на тиждень команда витрачає на рутину</label>
-          <div class="row">
-            <input type="number" id="cHours" value="12" min="0" step="1" inputmode="numeric">
-            <span class="unit">год / тиждень</span>
-          </div>
-        </div>
-        <div class="field">
-          <label for="cShare">Яку частину цієї рутини можна прибрати</label>
-          <input type="range" id="cShare" min="20" max="90" step="5" value="60">
-          <span class="rv-val" id="cShareVal">60%</span>
+        <div class="wf-run" aria-live="polite">
+          <span class="wf-run-l">Процес виконується</span>
+          <span class="wf-run-bar"><i id="ofBar"></i></span>
+          <span class="wf-run-s" id="ofStatus">Задача: перевірити строки</span>
         </div>
       </div>
-      <div class="calc-out">
-        <div>
-          <p class="lab">Вивільняється на місяць</p>
-          <p class="calc-big" id="cHoursOut">31 година</p>
-        </div>
-        <div class="calc-row"><span>У грошах на місяць</span><b id="cMonth">28 000 ₴</b></div>
-        <div class="calc-row"><span>За рік</span><b id="cYear">336 000 ₴</b></div>
-        <p class="calc-note">Рахунок простий: години рутини × частка, яку прибираємо × ваша ставка. Скільки саме автоматизується у вашому випадку, видно після години розбору.</p>
-      </div>
     </div>
-  </section>
-</div>
-
-<div class="band warm">
-  <div class="wrap">
-  <section class="rv">
-    <h2>Ризик на нашому боці</h2>
-    <div class="guar">
-      <h3>Перший процес — або результат, або без оплати</h3>
-      <p>Ми беремо один ваш процес, домовляємось наперед, що вважається результатом, і робимо. Якщо на приймання результату немає — ви не платите й нічого нам не винні.</p>
-      <p>Так чесніше, ніж обіцяти на словах. Ви ризикуєте годиною розмови, ми — своєю роботою.</p>
+    <div class="demo-text">
+      <div class="kicker">Як це виглядає</div>
+      <h2>Ви ставите задачу. Оркестратор виконує процес. Ви отримуєте результат.</h2>
+      <p>Задачу ставить компанія, юрист чи помічник: скласти документ, перевірити строки, відповісти клієнту. Оркестратор розбиває її на кроки й запускає потрібних виконавців.</p>
+      <p>На виході готовий результат. Людина його перевіряє і підтверджує.</p>
+      <p class="of-note">Оркестратор будуємо на n8n, Make, Zapier або власному коді, залежно від ваших систем.</p>
     </div>
-  </section>
-
   </div>
-</div>
+</section>
 
-<div class="band tint">
-  <div class="wrap">
-  <section class="rv">
-    <h2>Що кажуть клієнти</h2>
-    <p class="lead">Кожен відгук — про один конкретний процес і час, який він забирав до автоматизації. Наведено так, як їх надіслали.</p>
-    <div class="revs-sum">
-      <div><b>8</b><span>компаній поділились результатом</span></div>
-      <div><b>126</b><span>годин на місяць вивільнено сумарно</span></div>
-      <div><b>9–27</b><span>годин на місяць у кожній компанії</span></div>
-    </div>
-    <div class="revs" id="revs">
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#4E7CA8">О</span>
-          <div class="tg-id"><b>Олег, 38 років</b><span>Керуючий партнер юридичної фірми</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">Раніше звернення надходили з різних каналів, а інформацію про клієнта вручну переносили в таблицю та передавали юристу. Тепер картка клієнта створюється автоматично, відповідальний одразу отримує завдання, а ми бачимо статус кожного звернення.<span class="tg-meta">09:41<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">18 годин зекономлено на місяць</b><span class="tg-meta">09:42<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#8A6A22">І</span>
-          <div class="tg-id"><b>Ірина, 42 роки</b><span>Керуюча партнерка адвокатського обʼєднання</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">Процесуальні строки зберігалися в різних календарях і таблицях, тому їх доводилося регулярно перевіряти вручну. Тепер потрібні дати потрапляють у календар, а відповідальні юристи завчасно отримують нагадування. Контроль більше не залежить від того, чи хтось вчасно відкрив таблицю.<span class="tg-meta">10:18<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">12 годин зекономлено на місяць</b><span class="tg-meta">10:19<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#5C7D5E">А</span>
-          <div class="tg-id"><b>Андрій, 36 років</b><span>Керівник юридичної практики</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">Договори, довіреності та типові заяви ми готували на основі старих файлів, щоразу змінюючи дані вручну. Тепер документ формується з картки клієнта, а юрист лише перевіряє його перед використанням. Підготовка стала швидшою, а помилок у реквізитах — значно менше.<span class="tg-meta">11:07<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">27 годин зекономлено на місяць</b><span class="tg-meta">11:08<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#9A5F55">М</span>
-          <div class="tg-id"><b>Марина, 40 років</b><span>Операційна директорка юридичної компанії</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">Наприкінці місяця ми вручну збирали години команди, перевіряли виконані роботи та готували рахунки клієнтам. Тепер інформація накопичується впродовж місяця, а рахунки формуються на її основі. Замість кількох робочих днів нам залишається лише фінальна перевірка.<span class="tg-meta">12:52<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">14 годин зекономлено на місяць</b><span class="tg-meta">12:53<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#5D6A8C">В</span>
-          <div class="tg-id"><b>Віталій, 45 років</b><span>Керуючий партнер адвокатського бюро</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">Для підготовки щотижневого звіту доводилося окремо збирати інформацію в юристів і бухгалтерії. Тепер я отримую одне зведення: справи в роботі, завантаження команди, відпрацьовані години, виставлені рахунки та оплати.<span class="tg-meta">14:26<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">9 годин зекономлено на місяць</b><span class="tg-meta">14:27<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#7A6396">Н</span>
-          <div class="tg-id"><b>Наталія, 39 років</b><span>Партнерка юридичної фірми</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">За декілька років у нас накопичилися тисячі файлів, тому потрібний документ часто шукали за приблизною назвою або запитували в колег. Тепер його можна знайти за клієнтом, справою чи змістом. Особливо помітна різниця, коли інформація потрібна терміново.<span class="tg-meta">15:33<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">13 годин зекономлено на місяць</b><span class="tg-meta">15:34<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#3F7E86">Р</span>
-          <div class="tg-id"><b>Роман, 41 рік</b><span>Керуючий партнер юридичної компанії</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">Інформацію про клієнта та справу ми окремо вносили в CRM, робочу систему й фінансову таблицю. Через це дані дублювалися, а помилки доводилося виправляти вручну. Тепер достатньо внести інформацію один раз — далі вона автоматично передається між системами.<span class="tg-meta">16:49<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">22 години зекономлено на місяць</b><span class="tg-meta">16:50<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-      <article class="tg">
-        <div class="tg-bar">
-          <span class="tg-av" style="background:#9A7940">С</span>
-          <div class="tg-id"><b>Сергій, 44 роки</b><span>Партнер адвокатського обʼєднання</span></div>
-        </div>
-        <div class="tg-chat">
-          <div class="tg-msg">Частину завдань ми ставили в робочих чатах, тому керівникам доводилося постійно уточнювати статуси та нагадувати про строки. Тепер завдання створюються з відповідальними й датами виконання, а прострочення видно одразу. У команди зʼявився зрозумілий порядок роботи.<span class="tg-meta">18:12<span class="tg-tick">&#10003;&#10003;</span></span></div>
-          <div class="tg-msg"><b class="tg-res">11 годин зекономлено на місяць</b><span class="tg-meta">18:13<span class="tg-tick">&#10003;&#10003;</span></span></div>
-        </div>
-      </article>
-    </div>
-    <div class="revs-nav">
-      <button class="rev-btn" data-dir="-1" aria-label="Попередній відгук">&#8592;</button>
-      <button class="rev-btn" data-dir="1" aria-label="Наступний відгук">&#8594;</button>
-    </div>
-  </section>
-  </div>
-</div>
-
-<div class="wrap">
-  <section class="rv">
-    <h2>Формати впровадження</h2>
-    <p class="lead">Точна вартість визначається після розбору — вона залежить від того, у чому компанія веде справи зараз і скільки систем треба звʼязати між собою. Нижче — орієнтир, щоб було від чого відштовхуватись.</p>
-    <div class="pricing">
-      <div class="pricing-main">
-        <p class="pick">Вартість</p>
-        <h3>Розраховується індивідуально</h3>
-        <p>Після безкоштовного розбору ви отримуєте розрахунок саме по вашій компанії — з переліком робіт, строками й сумою.</p>
-        <ul class="pricing-dep">
-          <li>У чому компанія веде справи зараз</li>
-          <li>Скільки систем треба звʼязати між собою</li>
-          <li>Скільки процесів беремо в роботу</li>
+<!-- 5. ЩО ВХОДИТЬ (злиті «Що змінюється» + «Що входить») -->
+<section class="section tint">
+  <div class="container">
+    <div class="kicker">Що конкретно ми робимо</div>
+    <h2 class="section-title">Автоматизуємо процеси роботи і беремо впровадження на себе</h2>
+    <p class="section-sub">Розбиратися в технологіях не потрібно. Налаштування, дані й навчання — наша частина роботи.</p>
+    <div class="included">
+      <div class="inc-col">
+        <h3>Що автоматизуємо</h3>
+        <ul class="inc-list">
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 5h6a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H2z"/><path d="M11 8a3 3 0 0 1 3-3h7v6"/><circle cx="17" cy="15.5" r="3.2"/><path d="M19.4 17.9 22 20.5"/></svg></span><div><b>Пошук і аналіз практики</b><span>Відбір релевантних рішень за обставинами справи, а не лише за ключовими словами.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M14 3H5v18h7"/><path d="M14 3l5 5v5"/><path d="M14 3v5h5"/><path d="M8 9h3M8 13h6M8 17h3"/><path d="M15 21l.8-3 4.7-4.7 2.2 2.2-4.7 4.7z"/></svg></span><div><b>Підготовка документів</b><span>Проєкти договорів, позовів і листів з картки справи.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M3 5h18v16H3z"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/><path d="M7 14h3M7 17h3"/><path d="M13 15.5l2 2 4-4.5"/></svg></span><div><b>Терміни й засідання</b><span>Єдиний календар справ і нагадування відповідальним.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 5h14v10H2z"/><path d="M2 5l7 6 7-6"/><path d="M19 9h3v10l-3-2h-7v-2"/></svg></span><div><b>Прийом звернень</b><span>Месенджери, пошта й форма сайту збираються в одне місце.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><circle cx="8.5" cy="12" r="6"/><path d="M8.5 8.5V12h2.8"/><path d="M16 4h6v17l-1.5-1-1.5 1-1.5-1-1.5 1v-5"/><path d="M18 8h2M18 11h2"/></svg></span><div><b>Облік часу й рахунки</b><span>Години фіксуються по справах, рахунки формуються з них.</span></div></li>
         </ul>
       </div>
-      <div class="pricing-side">
-        <p class="pick">З чого зазвичай починають</p>
-        <div class="scope"><b>Один процес</b><span>Та автоматизація, що болить найбільше. Кілька днів роботи.</span></div>
-        <div class="scope"><b>Звʼязка процесів</b><span>Звернення → картка клієнта → документ → рахунок. Кілька тижнів.</span></div>
-        <div class="scope"><b>Під ключ</b><span>Уся практика на автоматизованому контурі. Від місяця.</span></div>
+      <div class="inc-col">
+        <h3>Що робимо ми</h3>
+        <ul class="inc-list">
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M15 3H5v18h8"/><path d="M15 3l4 4v4"/><path d="M8 8h6M8 12h4"/><circle cx="16.5" cy="16.5" r="3.5"/><path d="M19 19l3 3"/></svg></span><div><b>Розбираємо процеси</b><span>Дивимось, як робота йде насправді, а не як вона описана.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 15l6-6"/><path d="M10.5 6.5 13 4a4.2 4.2 0 0 1 6 6l-2.5 2.5"/><path d="M13.5 17.5 11 20a4.2 4.2 0 0 1-6-6l2.5-2.5"/></svg></span><div><b>Підключаємо ваші інструменти</b><span>Працюємо з тим, чим ви вже користуєтесь.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="8" ry="2.8"/><path d="M4 5.5v13c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8v-13"/><path d="M4 12c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8"/></svg></span><div><b>Налаштовуємо дані</b><span>Переносимо й структуруємо потрібну інформацію.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 3h20v13H2z"/><path d="M12 16v4M7 21h10"/><path d="M6 7h7M6 11h10"/></svg></span><div><b>Навчаємо</b><span>Вас або команду, на ваших реальних задачах.</span></div></li>
+          <li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 3v5h-5"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>Запускаємо і супроводжуємо</b><span>Стежимо за першими результатами і змінюємо систему, коли змінюються процеси.</span></div></li>
+        </ul>
       </div>
     </div>
-    <p class="star">Сервіси, на яких працює автоматизація, оплачуються окремо й напряму — рахунки приходять вам, доступи оформлюються на вашу компанію.</p>
-    <div class="note">
-      <p class="note-t">Чому не називаємо точну ціну одразу</p>
-      <p>Дві компанії з однаковим запитом можуть відрізнятися вдесятеро за обсягом робіт: одна вже веде справи в системі, до якої треба просто підключитись, інша тримає все в таблицях і на папері. Назвати число до розбору означало б або перестрахуватись, або пообіцяти те, чого не вийде витримати. Тому спершу — безкоштовна година, а вже потім конкретна цифра саме для вас.</p>
-    </div>
-  </section>
-
-  <section class="rv">
-    <h2>Підтримка — або ви, або ми</h2>
-    <p class="lead">Після впровадження рішення можна вести самостійно або залишити на нас. Перейти з одного варіанта на інший можна будь-коли.</p>
-    <div class="split">
-      <div><h3>Ведете ви</h3><p>При здачі передаємо доступи й документацію та навчаємо вашу людину. Далі ви повністю автономні.</p></div>
-      <div><h3>Ведемо ми</h3><p>Стежимо за роботою, реагуємо на збої, підправляємо під зміни у ваших процесах. Обсяг і вартість — індивідуально.</p></div>
-    </div>
-  </section>
-
-</div>
-
-<div class="band tint">
-  <div class="wrap">
-  <section class="rv">
-    <h2>Наші продукти</h2>
-    <p class="lead">Ми не лише впроваджуємо чуже — ми будуємо власне. Це те, на чому перевіряються наші підходи, перш ніж потрапити до клієнта.</p>
-    <div class="prod">
-      <span class="live"><span class="dot-live"></span>працює й оновлюється щодня</span>
-      <h3>Legal AI — аналіз судової практики</h3>
-      <p>Система, що читає матеріали справи, знеособлює їх, підбирає релевантну практику з реєстру судових рішень, звіряє законодавство на дату спору й готує документ. Уся база оновлюється щодня.</p>
-      <div class="prod-figs">
-        <div><b>27 млн</b> рішень із повним текстом</div>
-        <div><b>136 млн</b> карток справ</div>
-        <div><b>23</b> галузі права</div>
-        <div>практика <b>з 2000</b> року</div>
-      </div>
-      <p style="font-size:14px;color:var(--ink-3)">Зараз у тестовій експлуатації. Можемо показати в роботі на вашій справі просто під час розмови.</p>
-    </div>
-  </section>
-
   </div>
-</div>
+</section>
 
-<div class="wrap">
-  <section class="rv" style="border-bottom:none">
-    <h2>Ваші дані й ваші доступи</h2>
-    <div class="split">
-      <div><h3>Угода — до початку робіт</h3><p>Нерозголошення підписується перед стартом, а не після. У договорі окремо фіксується, до яких даних ми маємо доступ і в яких межах.</p></div>
-      <div><h3>Мінімум потрібного</h3><p>Більшість автоматизацій — нагадування, звернення, звіти, рух документів — узагалі не потребують доступу до матеріалів ваших клієнтів.</p></div>
-      <div><h3>Усе оформлюється на вас</h3><p>Реєстрації, ключі, сервіси — власником лишаєтесь ви. Вирішите працювати без нас — переносити нічого не треба.</p></div>
-      <div><h3>Ми в цьому працюємо</h3><p>Юридична галузь — наша основна робота, а не разовий проєкт. Не витрачаємо ваш час на занурення в предметну область.</p></div>
-    </div>
-  </section>
+<!-- 6. ЯК ПОБУДОВАНА РОБОТА З НАМИ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="kicker">Дорожня карта</div>
+    <h2 class="section-title">Як побудована робота з нами</h2>
+    <p class="section-sub">Спершу вимірюємо, потім автоматизуємо. Після кожного етапу ви бачите конкретний результат.</p>
 
-</div>
-
-<div class="contact" id="next">
-  <div class="wrap">
-    <p class="eyebrow">Наступний крок</p>
-    <div class="rule-sm"></div>
-    <h2>Домовимось про розбір</h2>
-    <p class="lead">Година розмови — і ви побачите свою практику в цифрах: скільки годин на місяць забирає ручна робота і що з цього можна прибрати першим. Безкоштовно й ні до чого не зобовʼязує.</p>
-    <div class="cta-card">
-      <a class="btn btn-lg" id="tg-cta" href="https://t.me/ai_legal_practice_bot?start=contact" target="_blank" rel="noopener noreferrer">Записатись на розбір у Telegram</a>
-      <ol class="cta-steps">
-        <li><b>Два дотики екрана.</b> Бот запитає, як до вас звертатись, і номер — ділитись контактом можна однією кнопкою, вручну набирати нічого не треба.</li>
-        <li><b>За бажанням</b> — одним рядком, що саме хочеться прибрати з рутини. Можна пропустити.</li>
-        <li><b>Відповідаємо того ж дня</b> й пропонуємо кілька зручних вікон на розмову.</li>
+    <div class="rm" id="rm">
+      <div class="rm-track" aria-hidden="true"><span class="rm-bar" id="rmBar"></span></div>
+      <ol class="rm-steps">
+      <li class="rm-step" data-i="0" tabindex="0">
+        <span class="rm-dot" aria-hidden="true">01</span>
+        <h3>Розбір і хронометраж</h3>
+        <p class="rm-do">Описуємо шлях справи від звернення до закриття й заміряємо, куди йдуть години кожної ролі.</p>
+        <p class="rm-res"><b>Результат</b>Перелік задач за годинами й ризиком і базові цифри для порівняння після запуску.</p>
+      </li>
+      <li class="rm-step" data-i="1" tabindex="0">
+        <span class="rm-dot" aria-hidden="true">02</span>
+        <h3>Єдина система справ</h3>
+        <p class="rm-do">Зводимо клієнтів, справи, форми й шаблони в одну систему, переносимо дані з розрізнених таблиць.</p>
+        <p class="rm-res"><b>Результат</b>Одне джерело даних. Без нього автоматизація лише множить хаос.</p>
+      </li>
+      <li class="rm-step" data-i="2" tabindex="0">
+        <span class="rm-dot" aria-hidden="true">03</span>
+        <h3>Перші автоматизації</h3>
+        <p class="rm-do">Запускаємо по одному процесу: шаблони, строки, рахунки. Кожен спершу перевіряємо на пробній справі.</p>
+        <p class="rm-res"><b>Результат</b>Шаблони й правила, затверджені вашими адвокатами до запуску.</p>
+      </li>
+      <li class="rm-step" data-i="3" tabindex="0">
+        <span class="rm-dot" aria-hidden="true">04</span>
+        <h3>Бот для клієнтів і ШІ</h3>
+        <p class="rm-do">Підключаємо бота, який приймає звернення клієнтів і сам повідомляє їм, як рухається справа. За потреби додаємо ШІ-пошук судової практики.</p>
+        <p class="rm-res"><b>Результат</b>Клієнти отримують відповіді швидше, а юристи не відволікаються на «як там моя справа».</p>
+      </li>
+      <li class="rm-step" data-i="4" tabindex="0">
+        <span class="rm-dot" aria-hidden="true">05</span>
+        <h3>Навчання й супровід</h3>
+        <p class="rm-do">Навчаємо команду, пишемо інструкції, налаштовуємо журнал запусків і сповіщення про збої.</p>
+        <p class="rm-res"><b>Результат</b>Збій видно одразу, а бюро не залежить від виконавця.</p>
+      </li>
       </ol>
     </div>
-    <p class="alt-lbl">Якщо зручніше інакше</p>
-    <div class="alt-ways">
-      <div class="alt">
-        <p class="lbl">Телефоном</p>
-        <b><a href="tel:+380987541154">+380 (98) 754-11-54</a></b>
-        <p>Дзвінок, Viber або Telegram на цей самий номер — як вам звичніше.</p>
+
+    <ul class="rm-rules"><li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M15 3H5v18h8"/><path d="M15 3l4 4v4"/><path d="M8 8h6M8 12h4"/><circle cx="16.5" cy="16.5" r="3.5"/><path d="M19 19l3 3"/></svg><p><b>Спершу комплексний аудит</b>Нічого не продаємо, поки не побачимо ваші процеси.</p></li><li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M15 3H5v18h6"/><path d="M15 3l4 4v5"/><path d="M8 8h7M8 12h5M8 16h2"/><circle cx="17" cy="16.5" r="3.5"/><path d="M15.4 19.6 14.5 23l2.5-1.2 2.5 1.2-.9-3.4"/></svg><p><b>Фіксуємо домовленості до старту</b>Обсяг, строки й вартість відомі до початку робіт.</p></li><li><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 5h7l2 2.5h11V20H2z"/><path d="M8.5 14l2.5 2.5 4.5-5"/></svg><p><b>Поступове впровадження</b>Ви бачите результат, перш ніж іти далі.</p></li></ul>
+
+    <div class="decision">
+      <div class="decision-text">
+        <h3>Рішення завжди за юристом</h3>
+        <p>AI готує підбірку, аналіз або проєкт. Рішення у справі завжди ухвалює юрист.</p>
       </div>
-      <div class="alt">
-        <p class="lbl">Поштою</p>
-        <b class="mail"><a href="mailto:ai.legal.xv@gmail.com?subject=%D0%A0%D0%BE%D0%B7%D0%B1%D1%96%D1%80%20%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D1%96%D0%B2&amp;body=%D0%92%D1%96%D1%82%D0%B0%D1%8E%21%20%D0%9A%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B8%3A%20%0A%D0%97%D0%B0%D0%BF%D0%B8%D1%82%3A%20">ai.legal.xv@gmail.com</a></b>
-        <p>Залиште контакти й одним рядком опишіть запит — відповімо того ж дня.</p>
+      <div class="decision-flow" aria-hidden="true">
+        <div class="df-node">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="9" width="20" height="16" rx="4"/><path d="M16 9V5"/><circle cx="16" cy="4" r="1.5"/><circle cx="12" cy="17" r="1.6"/><circle cx="20" cy="17" r="1.6"/><path d="M12.5 21.5h7"/></svg>
+          <b>AI готує</b>
+          <span>підбірку, аналіз, проєкт</span>
+        </div>
+        <div class="df-arrow"></div>
+        <div class="df-node lawyer">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 26h14"/><path d="M11 16l7-7"/><path d="M8.5 13.5l5-5 5.5 5.5-5 5z"/><path d="M17 15l9 9"/></svg>
+          <b>Юрист вирішує</b>
+          <span>перевіряє і ухвалює рішення</span>
+        </div>
       </div>
     </div>
-    <p class="contact-foot">Далі: узгоджуємо час → година розмови → за день надсилаємо розрахунок. Рішення за вами.</p>
+  </div>
+</section>
+
+<!-- 7. ЦІНИ: стартові ціни в USD, спідометр + 3 плани -->
+<section class="section tint" id="pricing">
+  <div class="container">
+    <div class="kicker">Вартість</div>
+    <h2 class="section-title">Прозорі стартові ціни на автоматизацію юридичних процесів</h2>
+    <p class="section-sub">Це стартові ціни в доларах. Фінальна сума залежить від кількості процесів, систем і шаблонів. Після безкоштовного розбору ви отримуєте фіксовану пропозицію.</p>
+    <div class="pg-team" role="group" aria-label="Розмір команди">
+      <span class="pg-team-l">Назва пакету</span>
+      <button type="button" data-i="0" aria-pressed="false">Start</button><button type="button" data-i="1" aria-pressed="true">Professional</button><button type="button" data-i="2" aria-pressed="false">Premium</button>
+    </div>
+    <div class="pg" id="pg">
+      <div class="pg-gauge"><svg class="g-svg" viewBox="0 0 460 260" aria-hidden="true">
+            <path class="g-track" d="M60.0 230.0 A170 170 0 0 1 400.0 230.0"/>
+            <path class="g-fill" id="gFill" d="M60.0 230.0 A170 170 0 0 1 400.0 230.0" pathLength="1"/>
+            <line class="g-tick maj" x1="82.0" y1="230.0" x2="92.0" y2="230.0"/><line class="g-tick" x1="87.0" y1="191.7" x2="92.8" y2="193.2"/><line class="g-tick maj" x1="101.8" y1="156.0" x2="110.5" y2="161.0"/><text class="g-num" x="126.1" y="174.0" text-anchor="middle">$0,5k</text><line class="g-tick" x1="125.3" y1="125.3" x2="129.6" y2="129.6"/><line class="g-tick maj" x1="156.0" y1="101.8" x2="161.0" y2="110.5"/><text class="g-num" x="170.0" y="130.1" text-anchor="middle">$1k</text><line class="g-tick" x1="191.7" y1="87.0" x2="193.2" y2="92.8"/><line class="g-tick maj" x1="230.0" y1="82.0" x2="230.0" y2="92.0"/><text class="g-num" x="230.0" y="114.0" text-anchor="middle">$1,5k</text><line class="g-tick" x1="268.3" y1="87.0" x2="266.8" y2="92.8"/><line class="g-tick maj" x1="304.0" y1="101.8" x2="299.0" y2="110.5"/><text class="g-num" x="290.0" y="130.1" text-anchor="middle">$2k</text><line class="g-tick" x1="334.7" y1="125.3" x2="330.4" y2="129.6"/><line class="g-tick maj" x1="358.2" y1="156.0" x2="349.5" y2="161.0"/><text class="g-num" x="333.9" y="174.0" text-anchor="middle">$2,5k</text><line class="g-tick" x1="373.0" y1="191.7" x2="367.2" y2="193.2"/><line class="g-tick maj" x1="378.0" y1="230.0" x2="368.0" y2="230.0"/>
+            <g class="g-mark" data-i="0"><line x1="69.6" y1="148.3" x2="58.9" y2="142.8"/><text x="42.9" y="132.7" text-anchor="middle">$450</text></g><g class="g-mark" data-i="1"><line x1="174.4" y1="58.8" x2="170.7" y2="47.4"/><text x="163.9" y="31.5" text-anchor="middle">$1 200</text></g><g class="g-mark" data-i="2"><line x1="394.4" y1="156.8" x2="405.4" y2="151.9"/><text x="421.8" y="142.6" text-anchor="middle">Договірна</text></g>
+            <g class="g-needle" id="gNeedle"><path d="M230 226 L102 230 L230 234 Z"/></g>
+            <circle class="g-hub" cx="230" cy="230" r="11"/><circle class="g-hub-in" cx="230" cy="230" r="4"/>
+          </svg></div>
+      <div class="pg-info" aria-live="polite">
+        <p class="pg-k" id="pgK">План 2 з 3</p>
+        <h3 id="pgName">Повний цикл справи</h3>
+        <p class="pg-price" id="pgPrice">$1 200</p>
+        <p class="pg-note" id="pgNote">Разова стартова ціна в USD</p>
+        <p class="pg-meta" id="pgMeta"><span id="pgTerm">Супровід 45 днів</span></p>
+        <p class="pg-desc" id="pgDesc">Для команд, яким потрібно звʼязати документи, строки й рахунки в один ланцюг.</p>
+      </div>
+    </div>
+    <div class="pcs sl-track" id="pcs" data-slider="План">
+      <article class="pc" data-i="0" tabindex="0" aria-label="План 1: Розбір і стартовий набір, $450">
+        <h3><span class="pc-sq" aria-hidden="true"></span>Start — стартовий</h3>
+        <p class="pc-desc">Для невеликих практик, які хочуть автоматизувати три процеси, що забирають найбільше часу.</p>
+        <p class="pc-price"><b>$450</b><span>разово, USD</span></p>
+        <a class="btn ghost-b" href="#contact">Записатися на безкоштовний розбір</a>
+        <p class="pc-count">6 пунктів у пакеті</p>
+        <ul class="pc-list"><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Розбір процесів із заміром часу на кожну задачу</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Шаблон договору про правову допомогу з автозаповненням</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Ще 2 автоматизації за результатами розбору</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Автоматизації в Zapier, Make або у вашій системі</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Письмова інструкція до кожної автоматизації</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>30 днів підтримки після запуску</li></ul>
+      </article>
+      <article class="pc rec" data-i="1" tabindex="0" aria-label="План 2: Повний цикл справи, $1 200">
+        <h3><span class="pc-sq" aria-hidden="true"></span>Professional — професійний<span class="pc-rec">Рекомендуємо</span></h3>
+        <p class="pc-desc">Для команд, яким потрібно звʼязати документи, строки й рахунки в один ланцюг.</p>
+        <p class="pc-price"><b>$1 200</b><span>разово, USD</span></p>
+        <a class="btn" href="#contact">Записатися на безкоштовний розбір</a>
+        <p class="pc-count">9 пунктів у пакеті</p>
+        <ul class="pc-list"><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Розбір процесів із заміром часу на кожну задачу</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>До 8 шаблонів документів з автозаповненням</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Нагадування про засідання й процесуальні строки</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Чек-листи задач за типом справи</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Рахунки й нагадування про оплату</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Автоматизації в Zapier, Make або у вашій системі</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Письмова інструкція до кожної автоматизації</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Навчання команди</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>45 днів підтримки після запуску</li></ul>
+      </article>
+      <article class="pc" data-i="2" tabindex="0" aria-label="План 3: Автоматизація всієї компанії, договірна ціна">
+        <h3><span class="pc-sq" aria-hidden="true"></span>Premium — преміальний</h3>
+        <p class="pc-desc">Для компаній із кількома практиками, яким потрібна автоматизація по всіх напрямах і системах.</p>
+        <p class="pc-price"><b>Договірна</b><span>після розбору</span></p>
+        <a class="btn ghost-b" href="#contact">Записатися на безкоштовний розбір</a>
+        <p class="pc-count">10 пунктів у пакеті</p>
+        <ul class="pc-list"><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Поглиблений розбір процесів по всіх напрямах практики</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>До 20 шаблонів документів по напрямах практики</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Нагадування про строки з передачею партнеру, якщо юрист не відреагував</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Чек-листи задач по категоріях справ</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Рахунки, нагадування про оплату і звіти по дебіторці</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Синхронізація пошти, рахунків і сховища документів</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Власні інтеграції там, де немає готового конектора</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Сповіщення про збої та журнал запусків</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Навчання команди й письмові інструкції</li><li><span class="pc-chk"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>60 днів підтримки після запуску</li></ul>
+      </article>
+    </div>
+   
+  </div>
+</section>
+
+<!-- 7а. ТЕХНОЛОГІЇ: ізометричний стек + категорії -->
+<section class="section" id="stack">
+  <div class="container">
+    <div class="ts-top">
+      <div>
+        <div class="kicker">Технології під ваш проєкт</div>
+        <h2 class="section-title">Технологія Orbita IX</h2>
+      </div>
+      <p class="section-sub">Автоматизуємо всередині систем, якими компанія вже користується. Zapier, Make чи власний код додаємо лише там, де інструменти не вміють працювати між собою.</p>
+    </div>
+    <div class="ts" id="ts">
+      <div class="ts-left">
+      <svg class="ts-svg" viewBox="0 0 520 548" role="img" aria-label="Стек технологій: Автоматизація, Справи й рахунки, Документи й підпис, Реєстри й суди, Пошта, календарі й месенджери">
+        <g class="ts-layer" data-i="4" tabindex="-1">
+          <polygon class="ts-l" points="40,450 170,512 170,528 40,466"/><polygon class="ts-r" points="170,512 300,450 300,466 170,528"/><polygon class="ts-face" points="170,388 300,450 170,512 40,450"/>
+          <g class="ts-dots"><rect class="ts-dot" x="116" y="446" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="146" y="446" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="176" y="446" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="206" y="446" width="10" height="10" transform="rotate(0)"/></g>
+          <line class="ts-lead" x1="306" y1="450" x2="340" y2="450"/>
+          <text class="ts-lab" x="348" y="454">Пошта, календарі й месенджери</text>
+        </g>
+        <g class="ts-layer" data-i="3" tabindex="-1">
+          <polygon class="ts-l" points="40,358 170,420 170,436 40,374"/><polygon class="ts-r" points="170,420 300,358 300,374 170,436"/><polygon class="ts-face" points="170,296 300,358 170,420 40,358"/>
+          <g class="ts-dots"><rect class="ts-dot" x="116" y="354" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="146" y="354" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="176" y="354" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="206" y="354" width="10" height="10" transform="rotate(0)"/></g>
+          <line class="ts-lead" x1="306" y1="358" x2="340" y2="358"/>
+          <text class="ts-lab" x="348" y="362">Реєстри й суди</text>
+        </g>
+        <g class="ts-layer" data-i="2" tabindex="-1">
+          <polygon class="ts-l" points="40,266 170,328 170,344 40,282"/><polygon class="ts-r" points="170,328 300,266 300,282 170,344"/><polygon class="ts-face" points="170,204 300,266 170,328 40,266"/>
+          <g class="ts-dots"><rect class="ts-dot" x="116" y="262" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="146" y="262" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="176" y="262" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="206" y="262" width="10" height="10" transform="rotate(0)"/></g>
+          <line class="ts-lead" x1="306" y1="266" x2="340" y2="266"/>
+          <text class="ts-lab" x="348" y="270">Документи й підпис</text>
+        </g>
+        <g class="ts-layer" data-i="1" tabindex="-1">
+          <polygon class="ts-l" points="40,174 170,236 170,252 40,190"/><polygon class="ts-r" points="170,236 300,174 300,190 170,252"/><polygon class="ts-face" points="170,112 300,174 170,236 40,174"/>
+          <g class="ts-dots"><rect class="ts-dot" x="116" y="170" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="146" y="170" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="176" y="170" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="206" y="170" width="10" height="10" transform="rotate(0)"/></g>
+          <line class="ts-lead" x1="306" y1="174" x2="340" y2="174"/>
+          <text class="ts-lab" x="348" y="178">Справи й рахунки</text>
+        </g>
+        <g class="ts-layer" data-i="0" tabindex="-1">
+          <polygon class="ts-l" points="40,82 170,144 170,160 40,98"/><polygon class="ts-r" points="170,144 300,82 300,98 170,160"/><polygon class="ts-face" points="170,20 300,82 170,144 40,82"/>
+          <g class="ts-dots"><rect class="ts-dot" x="116" y="78" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="146" y="78" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="176" y="78" width="10" height="10" transform="rotate(0)"/><rect class="ts-dot" x="206" y="78" width="10" height="10" transform="rotate(0)"/></g>
+          <line class="ts-lead" x1="306" y1="82" x2="340" y2="82"/>
+          <text class="ts-lab" x="348" y="86">Автоматизація</text>
+        </g>
+      </svg>
+      </div>
+      <ul class="ts-cats">
+        <li class="ts-cat" data-i="0" tabindex="0">
+          <p class="ts-h"><span class="ts-ic"><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 9a8 8 0 0 0-14.5-3"/><path d="M5 2v4h4"/><path d="M4 15a8 8 0 0 0 14.5 3"/><path d="M19 22v-4h-4"/></svg></span>Автоматизація<span class="ts-n">6 інструментів</span></p>
+          <ul class="ts-chips"><li>Zapier</li><li>Make</li><li>n8n</li><li>Власний код</li><li>Google Cloud</li><li>Власний сервер</li></ul>
+        </li>
+        <li class="ts-cat" data-i="1" tabindex="0">
+          <p class="ts-h"><span class="ts-ic"><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><circle cx="8.5" cy="12" r="6"/><path d="M8.5 8.5V12h2.8"/><path d="M16 4h6v17l-1.5-1-1.5 1-1.5-1-1.5 1v-5"/><path d="M18 8h2M18 11h2"/></svg></span>Справи й рахунки<span class="ts-n">4 інструменти</span></p>
+          <ul class="ts-chips"><li>Notion</li><li>Airtable</li><li>Google Таблиці</li><li>KeyCRM</li></ul>
+        </li>
+        <li class="ts-cat" data-i="2" tabindex="0">
+          <p class="ts-h"><span class="ts-ic"><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M14 3H5v18h7"/><path d="M14 3l5 5v5"/><path d="M14 3v5h5"/><path d="M8 9h3M8 13h6M8 17h3"/><path d="M15 21l.8-3 4.7-4.7 2.2 2.2-4.7 4.7z"/></svg></span>Документи й підпис<span class="ts-n">4 інструменти</span></p>
+          <ul class="ts-chips"><li>Шаблони Word</li><li>Google Документи</li><li>КЕП / Дія.Підпис</li><li>Google Диск</li></ul>
+        </li>
+        <li class="ts-cat" data-i="3" tabindex="0">
+          <p class="ts-h"><span class="ts-ic"><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M3 4h4v16H3zM9 4h4v16H9z"/><path d="M15 5.2l3.8-1 4 15.5-3.8 1z"/><path d="M3 8h4M9 8h4"/></svg></span>Реєстри й суди<span class="ts-n">4 інструменти</span></p>
+          <ul class="ts-chips"><li>Електронний суд</li><li>Законодавство з редакціями</li><li>Власна база рішень: 132 млн+</li><li>Legal AI</li></ul>
+        </li>
+        <li class="ts-cat" data-i="4" tabindex="0">
+          <p class="ts-h"><span class="ts-ic"><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 5h14v10H2z"/><path d="M2 5l7 6 7-6"/><path d="M19 9h3v10l-3-2h-7v-2"/></svg></span>Пошта, календарі й месенджери<span class="ts-n">4 інструменти</span></p>
+          <ul class="ts-chips"><li>Gmail</li><li>Outlook</li><li>Google Календар</li><li>Telegram</li></ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 8. УКРАЇНСЬКА СПЕЦИФІКА І КОНФІДЕНЦІЙНІСТЬ -->
+<section class="section" id="ua">
+  <div class="container">
+    <div class="kicker">Конфіденційність і українська специфіка</div>
+    <h2 class="section-title">Побудовано під умови, в яких працює український адвокат</h2>
+    <p class="section-sub">Ми дотримуємось адвокатської таємниці, не збираємо й не зберігаємо персональні дані ваших клієнтів. Перебої зі світлом і клієнтів у месенджерах теж закладаємо в процеси до старту.</p>
+    <div class="conf-grid sl-track" data-slider="Картка">
+      <div class="card conf"><span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.2 8 11 4.6-1.8 8-6 8-11V5z"/><path d="M9 11h6v6H9z"/><path d="M10.5 11V9.5a1.5 1.5 0 0 1 3 0V11"/></svg></span><h3>Адвокатська таємниця</h3><p>Перед відправкою в AI-модель система автоматично прибирає імена, реквізити й ідентифікатори. Обираємо сервіси, які не навчаються на ваших даних, а для найчутливіших справ працюємо без зовнішніх сервісів.</p></div>
+      <div class="card conf"><span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="8" ry="2.8"/><path d="M4 5.5v13c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8v-13"/><path d="M4 12c0 1.5 3.6 2.8 8 2.8s8-1.3 8-2.8"/></svg></span><h3>Персональні дані під захистом</h3><p>Ми не збираємо й не зберігаємо персональні дані ваших клієнтів. Усе лишається у ваших системах і на ваших акаунтах, доступ має лише ваша команда, а кожен співробітник бачить тільки свої справи.</p></div>
+      <div class="card conf"><span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 7h17v10H2z"/><path d="M19 10h3v4h-3"/><path d="M11.5 8.5 8 12h4.5L9 15.5"/></svg></span><h3>Робота під час блекаутів</h3><p>Хмарні резервні копії поза межами одного міста, офлайн-копія календаря строків і простий ручний режим, якщо автоматизація тимчасово недоступна.</p></div>
+      <div class="card conf"><span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 11 22 3l-6 18-4-7z"/><path d="M12 14 22 3"/></svg></span><h3>Клієнти в месенджерах</h3><p>Прийом звернень і оновлення клієнтам будуємо в Telegram і Viber, де клієнти вже пишуть. Конфіденційні документи передаємо захищеним каналом, а не у відкритій переписці.</p></div>
+      <div class="card conf"><span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M14 3H5v18h7"/><path d="M14 3l5 5v5"/><path d="M14 3v5h5"/><path d="M8 9h3M8 13h6M8 17h3"/><path d="M15 21l.8-3 4.7-4.7 2.2 2.2-4.7 4.7z"/></svg></span><h3>КЕП і Електронний суд</h3><p>Договори підписуються КЕП або Дія.Підписом. Вимоги Електронного суду враховуємо в процесах подання, а можливості інтеграції перевіряємо до проєктування, а не обіцяємо наперед.</p></div>
+      <div class="card conf"><span class="ic-box"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M15 3H5v18h8"/><path d="M15 3l4 4v4"/><path d="M8 8h6M8 12h4"/><circle cx="16.5" cy="16.5" r="3.5"/><path d="M19 19l3 3"/></svg></span><h3>Відповідальність за документ</h3><p>До суду нічого не йде без перевірки адвоката. У підбірках практики є посилання на кожне рішення, а в журналі видно, хто перевірив і затвердив документ.</p></div>
+    </div>
+    <ul class="conf-strip"><li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M14 3H5v18h7"/><path d="M14 3l5 5v3"/><path d="M8 8h5M8 12h5"/><path d="M14 16h8v6h-8z"/><path d="M16 16v-2a2 2 0 0 1 4 0v2"/></svg></span><p><b>NDA до початку робіт</b>Підписуємо до того, як побачимо документи й дані клієнтів.</p></li><li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><circle cx="8" cy="15" r="5"/><path d="M11.5 11.5 21 2"/><path d="M17 6l3 3M14.5 8.5l2.5 2.5"/></svg></span><p><b>Доступи у вас</b>Ви бачите, хто і до чого має доступ, і закриваєте його будь-коли.</p></li><li><span class="ic-box sm"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 3h6v5l3 4v3H6v-3l3-4z"/><path d="M4 18h16v3H4z"/></svg></span><p><b>Усе оформлено на вас</b>Сервіси, підписки й сценарії реєструються на вашу компанію.</p></li></ul>
+  </div>
+</section>
+
+<!-- 9. ПРОДУКТ LEGAL AI -->
+<section class="section tint" id="product">
+  <div class="container">
+    <div class="lx-hero">
+      <div>
+        <div class="kicker">Наш продукт</div>
+        <h2 class="lx-title">Legal AI від ORBITA IX — <em>помічник юриста</em> у веб-кабінеті й Telegram</h2>
+        <p class="lx-lead">Завантажте матеріали справи або опишіть фабулу. Система знайде практику в Єдиному реєстрі, визначить редакцію закону на дату правовідносин і підготує висновок, документ чи експертизу з посиланням на кожне рішення.</p>
+        <div class="lx-acts">
+          <a class="btn" href="https://app.orbita-ix.com" target="_blank" rel="noopener">Відкрити кабінет<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          <a class="btn ghost-b" href="https://app.orbita-ix.com" target="_blank" rel="noopener">Отримати 400 кредитів безкоштовно</a>
+        </div>
+        <p class="lx-note">Без оплати й без картки. Текстовий пошук безкоштовний завжди.</p>
+      </div>
+      <div class="lx-frame">
+        <a class="lx-win" href="https://app.orbita-ix.com" target="_blank" rel="noopener">
+          <span class="lx-bar"><span class="lx-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="lx-addr">app.orbita-ix.com</span></span>
+          <img src="img/legal-ai-cabinet.jpg" alt="Перша сторінка веб-кабінету Legal AI" width="1100" height="752" loading="lazy">
+        </a>
+      </div>
+    </div>
+
+    <div class="lx-stats">
+      <div class="lx-stat"><b>132 млн+</b><span>судових рішень з повним текстом</span></div>
+      <div class="lx-stat"><b>33</b><span>галузі права, усі види судочинства</span></div>
+      <div class="lx-stat"><b>843</b><span>суди трьох інстанцій, реєстр з 2001 року</span></div>
+      <div class="lx-stat"><b>454 тис.</b><span>редакцій законодавства, 295 тис. актів</span></div>
+    </div>
+    <p class="lx-fresh"><span>Джерела: Єдиний державний реєстр судових рішень і Верховна Рада України</span><span>Оновлюється щоночі</span></p>
+
+    <div class="lx-bases">
+      <div class="lx-card">
+        <h3>Судова практика</h3>
+        <p>Єдиний державний реєстр судових рішень: понад 132 мільйони рішень з повним текстом у 33 галузях права. Цивільні, господарські, адміністративні й кримінальні справи, а також справи про адміністративні правопорушення.</p>
+      </div>
+      <div class="lx-card">
+        <h3>Законодавство</h3>
+        <p>Закони, кодекси й підзаконні акти з відкритих даних Верховної Ради з датою кожної зміни: 295 тисяч актів і 454 тисячі редакцій. Оновлюється щоночі.</p>
+      </div>
+    </div>
+
+    <div class="lx-diff">
+      <div class="lx-card"><p class="lx-hook">Спір 2019 року. Скільки разів відтоді змінювався цей закон?</p><h3>Редакція закону на дату спору</h3><p>Система визначає, яка редакція діяла на момент виникнення спору, і аналізує справу за нею. Шукаючи вручну, юрист зазвичай відкриває чинну версію, і саме тут виникають помилки.</p></div>
+      <div class="lx-card"><p class="lx-hook">Де позиція Верховного Суду серед сотень рішень першої інстанції?</p><h3>Зріз по трьох інстанціях</h3><p>Практика відбирається окремо по кожному рівню: Верховний Суд і вищі суди, апеляція, перша інстанція. Позиція вищих судів не губиться у видачі.</p></div>
+      <div class="lx-card"><p class="lx-hook">Тисячі рішень за ключовими словами. Які з них справді про вашу справу?</p><h3>Релевантна практика</h3><p>Кожне знайдене рішення система перевіряє на відповідність обставинам вашої справи, а не лише збігу слів, і показує, на чию користь воно працює.</p><div class="lx-split"><span>на користь</span><span>дотична</span><span>протилежна</span></div></div>
+    </div>
+
+    <div class="lx-tools">
+      <div class="lx-tool">
+        <span class="lx-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 4h16v12H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg></span>
+        <h3>Юридичний висновок</h3>
+        <p>AI-чат розбирає справу і будує висновок лише на релевантній практиці: рішеннях, що відповідають обставинам вашої справи, на користь і проти. Відповідає на запитання до висновку.</p>
+        <span class="lx-tag">2–4 хвилини</span>
+      </div>
+      <div class="lx-tool">
+        <span class="lx-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></svg></span>
+        <h3>Текстовий пошук</h3>
+        <p>2–4 слова, і рішення, де є всі вони. Фільтри за галуззю, інстанцією, судом і роками.</p>
+        <span class="lx-tag free">Безкоштовно · менше секунди</span>
+      </div>
+      <div class="lx-tool">
+        <span class="lx-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 3H5v18h14V8z"/><path d="M14 3v5h5M8 12h8M8 15h8M8 18h5"/></svg></span>
+        <h3>Документи</h3>
+        <p>Позови, відзиви, скарги й клопотання у Word з практикою під вашу позицію.</p>
+        <span class="lx-tag">Близько 1,5 хвилини</span>
+      </div>
+      <div class="lx-tool">
+        <span class="lx-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></span>
+        <h3>Експертиза</h3>
+        <p>Договір чи документ опонента: ризики, чого бракує і що переписати, з нормами й практикою.</p>
+        <span class="lx-tag">Близько 2 хвилин</span>
+      </div>
+    </div>
+
+    <div class="lx-how">
+      <div class="lx-card">
+        <h3>Як це виглядає для юриста</h3>
+        <ol>
+          <li>Завантажуєте матеріали в кабінеті або надсилаєте в Telegram: текст, фото чи скан.</li>
+          <li>Імена й реквізити прибираються до аналізу.</li>
+          <li>Система визначає галузь права за обставинами справи, а не за ключовими словами.</li>
+          <li>Підтягує редакцію закону, чинну на дату спору.</li>
+          <li>Шукає практику по всьому реєстру, окремо по трьох інстанціях, і відбирає релевантну вашій справі.</li>
+          <li>Повертає висновок: які норми застосовні, які позиції судів, на що спертися. Кожне рішення з посиланням на реєстр.</li>
+        </ol>
+      </div>
+      <div class="lx-card lx-ch">
+        <p class="lx-contrast">Ви вчилися на юриста не для того, щоб гортати реєстр.</p>
+        <h3>Перевірте Legal AI на справі, яку ви вже вели</h3>
+        <p>Опишіть фабулу справи, яку вже вели, і порівняйте добірку системи з тим, що знайшли самі. Новим акаунтам нараховуємо 400 кредитів на перший висновок.</p>
+        <ul class="lx-chips"><li>33 галузі права</li><li>Фото й скани</li><li>Анонімізація даних</li><li>Веб-кабінет і Telegram</li></ul>
+        <a class="btn" href="https://app.orbita-ix.com" target="_blank" rel="noopener">Отримати 400 кредитів безкоштовно</a>
+        <a class="btn ghost-b" href="https://app.orbita-ix.com" target="_blank" rel="noopener">Відкрити кабінет<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9а. ВІДГУКИ КЛІЄНТІВ (з orbita-ix.com) — таби -->
+<section class="section" id="reviews">
+  <div class="container">
+    <div class="rt-top">
+      <div>
+        <div class="kicker">Відгуки клієнтів</div>
+        <h2 class="section-title">Що кажуть клієнти після запуску</h2>
+      </div>
+      <p class="section-sub">Кожен відгук — про один конкретний процес і час, який він забирав до автоматизації. Наведено так, як їх надіслали.</p>
+    </div>
+    <div class="rt" id="rt">
+      <div class="rt-tabs" role="tablist" aria-label="Відгуки клієнтів">
+        <button type="button" class="rt-tab" role="tab" id="rtTab0" aria-selected="true" aria-controls="rtPanel0" tabindex="0"><span class="rt-ini" aria-hidden="true">О</span>Олег</button>
+        <button type="button" class="rt-tab" role="tab" id="rtTab1" aria-selected="false" aria-controls="rtPanel1" tabindex="-1"><span class="rt-ini" aria-hidden="true">І</span>Ірина</button>
+        <button type="button" class="rt-tab" role="tab" id="rtTab2" aria-selected="false" aria-controls="rtPanel2" tabindex="-1"><span class="rt-ini" aria-hidden="true">А</span>Андрій</button>
+        <button type="button" class="rt-tab" role="tab" id="rtTab3" aria-selected="false" aria-controls="rtPanel3" tabindex="-1"><span class="rt-ini" aria-hidden="true">М</span>Марина</button>
+        <button type="button" class="rt-tab" role="tab" id="rtTab4" aria-selected="false" aria-controls="rtPanel4" tabindex="-1"><span class="rt-ini" aria-hidden="true">В</span>Віталій</button>
+        <button type="button" class="rt-tab" role="tab" id="rtTab5" aria-selected="false" aria-controls="rtPanel5" tabindex="-1"><span class="rt-ini" aria-hidden="true">Н</span>Наталія</button>
+        <button type="button" class="rt-tab" role="tab" id="rtTab6" aria-selected="false" aria-controls="rtPanel6" tabindex="-1"><span class="rt-ini" aria-hidden="true">Р</span>Роман</button>
+        <button type="button" class="rt-tab" role="tab" id="rtTab7" aria-selected="false" aria-controls="rtPanel7" tabindex="-1"><span class="rt-ini" aria-hidden="true">С</span>Сергій</button>
+      </div>
+      <div class="rt-card">
+        <svg class="rt-q" viewBox="0 0 48 36" width="40" height="30" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 34V20C4 10 9 4 18 2M4 20h14v14H4M28 34V20c0-10 5-16 14-18M28 20h14v14H28"/></svg>
+        <div class="rt-panels">
+        <div class="rt-panel" role="tabpanel" id="rtPanel0" aria-labelledby="rtTab0">
+          <p class="rt-proc">Прийом звернень<span>18 годин на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>Раніше звернення надходили з різних каналів, а інформацію про клієнта вручну переносили в таблицю та передавали юристу. Тепер картка клієнта створюється автоматично, відповідальний одразу отримує завдання, а ми бачимо статус кожного звернення.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Олег, 38 років</b><span>Керуючий партнер юридичної фірми</span></div>
+        </div>
+        <div class="rt-panel" role="tabpanel" id="rtPanel1" aria-labelledby="rtTab1" hidden>
+          <p class="rt-proc">Процесуальні строки<span>12 годин на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>Процесуальні строки зберігалися в різних календарях і таблицях, тому їх доводилося регулярно перевіряти вручну. Тепер потрібні дати потрапляють у календар, а відповідальні юристи завчасно отримують нагадування. Контроль більше не залежить від того, чи хтось вчасно відкрив таблицю.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Ірина, 42 роки</b><span>Керуюча партнерка адвокатського обʼєднання</span></div>
+        </div>
+        <div class="rt-panel" role="tabpanel" id="rtPanel2" aria-labelledby="rtTab2" hidden>
+          <p class="rt-proc">Документи з шаблонів<span>27 годин на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>Договори, довіреності та типові заяви ми готували на основі старих файлів, щоразу змінюючи дані вручну. Тепер документ формується з картки клієнта, а юрист лише перевіряє його перед використанням. Підготовка стала швидшою, а помилок у реквізитах — значно менше.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Андрій, 36 років</b><span>Керівник юридичної практики</span></div>
+        </div>
+        <div class="rt-panel" role="tabpanel" id="rtPanel3" aria-labelledby="rtTab3" hidden>
+          <p class="rt-proc">Облік часу й рахунки<span>14 годин на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>Наприкінці місяця ми вручну збирали години команди, перевіряли виконані роботи та готували рахунки клієнтам. Тепер інформація накопичується впродовж місяця, а рахунки формуються на її основі. Замість кількох робочих днів нам залишається лише фінальна перевірка.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Марина, 40 років</b><span>Операційна директорка юридичної компанії</span></div>
+        </div>
+        <div class="rt-panel" role="tabpanel" id="rtPanel4" aria-labelledby="rtTab4" hidden>
+          <p class="rt-proc">Зведення для керівника<span>9 годин на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>Для підготовки щотижневого звіту доводилося окремо збирати інформацію в юристів і бухгалтерії. Тепер я отримую одне зведення: справи в роботі, завантаження команди, відпрацьовані години, виставлені рахунки та оплати.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Віталій, 45 років</b><span>Керуючий партнер адвокатського бюро</span></div>
+        </div>
+        <div class="rt-panel" role="tabpanel" id="rtPanel5" aria-labelledby="rtTab5" hidden>
+          <p class="rt-proc">Пошук по архіву<span>13 годин на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>За декілька років у нас накопичилися тисячі файлів, тому потрібний документ часто шукали за приблизною назвою або запитували в колег. Тепер його можна знайти за клієнтом, справою чи змістом. Особливо помітна різниця, коли інформація потрібна терміново.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Наталія, 39 років</b><span>Партнерка юридичної фірми</span></div>
+        </div>
+        <div class="rt-panel" role="tabpanel" id="rtPanel6" aria-labelledby="rtTab6" hidden>
+          <p class="rt-proc">Обмін даними між системами<span>22 години на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>Інформацію про клієнта та справу ми окремо вносили в CRM, робочу систему й фінансову таблицю. Через це дані дублювалися, а помилки доводилося виправляти вручну. Тепер достатньо внести інформацію один раз — далі вона автоматично передається між системами.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Роман, 41 рік</b><span>Керуючий партнер юридичної компанії</span></div>
+        </div>
+        <div class="rt-panel" role="tabpanel" id="rtPanel7" aria-labelledby="rtTab7" hidden>
+          <p class="rt-proc">Завдання й статуси<span>11 годин на місяць зекономлено</span></p>
+          <blockquote class="rt-quote"><p>Частину завдань ми ставили в робочих чатах, тому керівникам доводилося постійно уточнювати статуси та нагадувати про строки. Тепер завдання створюються з відповідальними й датами виконання, а прострочення видно одразу. У команди зʼявився зрозумілий порядок роботи.</p></blockquote>
+          <button type="button" class="rt-full" aria-expanded="false">Читати відгук повністю</button>
+          <div class="rt-who"><b>Сергій, 44 роки</b><span>Партнер адвокатського обʼєднання</span></div>
+        </div>
+        </div>
+        <div class="rt-nav">
+          <span class="rt-count"><b id="rtCur">01</b> / 08</span>
+          <button type="button" class="rt-arrow" id="rtPrev" aria-label="Попередній відгук"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></button>
+          <button type="button" class="rt-arrow" id="rtNext" aria-label="Наступний відгук"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <div class="rt-stats">
+          <div><b data-count="8">8</b><span>компаній поділились результатом</span></div>
+          <div><b data-count="126">126</b><span>годин на місяць вивільнено сумарно</span></div>
+          <div><b data-count="9–27">9–27</b><span>годин на місяць у кожній компанії</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. ГОЛОВНИЙ ОФЕР + КАЛЬКУЛЯТОР -->
+<section class="section" id="audit">
+  <div class="container">
+    <div class="big-offer">
+      <div class="offer-top">
+        <div>
+          <div class="kicker" style="text-align:left;color:#6fd6ff">Головна пропозиція</div>
+          <h2>Година розбору бізнес-процесів зі спеціалістом з АІ — безкоштовно</h2>
+          <p>Поки ви вручну вичитуєте контракти та аналізуєте судову практику, ваші конкуренти закривають угоди втричі швидше. Дізнайтеся, яку суму ви втрачаєте щомісяця через рутинну ручну працю.</p>
+        </div>
+        <div>
+          <ul class="checks">
+            <li><span class="check">✓</span><span>Розрахунок годин ручної роботи по кожному процесу</span></li>
+            <li><span class="check">✓</span><span>Що з цього можна прибрати і з чого почати</span></li>
+            <li><span class="check">✓</span><span>Без продажу на зустрічі: рішення ухвалюєте ви</span></li>
+          </ul>
+          <p class="keep-note">Розрахунок лишається у вас, навіть якщо ви нічого не замовите.</p>
+          <a class="btn large" href="#contact">Записатися на безкоштовний розбір</a>
+        </div>
+      </div>
+
+      <!-- ===== КАЛЬКУЛЯТОР ЕКОНОМІЇ: лише дані клієнта, без наших цін ===== -->
+      <div class="saver" id="calc">
+        <div class="saver-head">
+          <p class="saver-kicker">Попередня оцінка</p>
+          <h3>Порахуйте свою економію</h3>
+          <p>Введіть свої числа і побачите, у що обходиться рутина вашій практиці щомісяця.</p>
+        </div>
+        <div class="saver-grid">
+          <div class="saver-inputs">
+            <label class="saver-field">
+              <span class="saver-label">Скільки коштує година роботи юриста</span>
+              <span class="saver-row"><input type="number" id="sRate" value="900" min="0" step="50" inputmode="numeric"><span class="saver-suffix">₴ / год</span></span>
+            </label>
+            <label class="saver-field">
+              <span class="saver-label">Скільки годин на тиждень команда витрачає на рутину</span>
+              <span class="saver-row"><input type="number" id="sHours" value="12" min="0" step="1" inputmode="numeric"><span class="saver-suffix">год / тиждень</span></span>
+            </label>
+            <div class="saver-field">
+              <span class="saver-label" id="sShareLabel">Яку частину цієї рутини можна прибрати</span>
+              <div class="saver-range">
+                <input type="range" id="sShare" min="10" max="90" step="5" value="60" aria-labelledby="sShareLabel">
+                <output id="sShareOut" for="sShare">60%</output>
+              </div>
+            </div>
+          </div>
+          <div class="saver-results" aria-live="polite">
+            <div class="saver-res">
+              <span class="saver-res-label">Вивільняється на місяць</span>
+              <span class="saver-res-val" id="sMonthHours">31 година</span>
+            </div>
+            <div class="saver-res">
+              <span class="saver-res-label">У грошах на місяць</span>
+              <span class="saver-res-val" id="sMonthMoney">28 000 ₴</span>
+            </div>
+            <div class="saver-res">
+              <span class="saver-res-label">За рік</span>
+              <span class="saver-res-val brass" id="sYearMoney">336 000 ₴</span>
+            </div>
+          </div>
+        </div>
+        <p class="saver-note">Це попередня оцінка. Точну частку рутини, яку можна автоматизувати, визначаємо на безкоштовному розборі. Рахунок простий: години рутини × частка, яку прибираємо × ваша ставка.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. ЗАПЕРЕЧЕННЯ -->
+<section class="section tint">
+  <div class="container">
+    <div class="kicker">Заперечення</div>
+    <h2 class="section-title">Що вас зупиняє?</h2>
+    <div class="faq-wrap">
+      <div class="faq">
+        <details><summary><span class="faq-n">01</span>Скільки це коштує і скільки триває?</summary><p>Стартові ціни планів — $450 і $1 200, вони вказані вище. Для автоматизації всієї компанії вартість договірна. Точну суму й строки фіксуємо після безкоштовного розбору, коли бачимо ваші процеси й системи.</p></details>
+        <details><summary><span class="faq-n">02</span>Я практикую сам. Мені це підходить?</summary><p>Так. Для юриста з власною практикою зазвичай починаємо з одного процесу, наприклад прийому звернень або рахунків, і розширюємо, коли бачите результат.</p></details>
+        <details><summary><span class="faq-n">03</span>А якщо команда не освоїть AI?</summary><p>Навчання входить у впровадження. Ми будуємо процес навколо ваших задач, юристам не доводиться самостійно розбиратися з технологією.</p></details>
+        <details><summary><span class="faq-n">04</span>А якщо AI помилиться?</summary><p>AI формує проєкт, підбірку або первинний аналіз. Фінальна перевірка і рішення залишаються за юристом.</p></details>
+        <details><summary><span class="faq-n">05</span>Ми вже пробували автоматизацію</summary><p>Тому починаємо з розбору реальних процесів: до впровадження видно, де автоматизація має практичний сенс, а де ні.</p></details>
+        <details><summary><span class="faq-n">06</span>Скільки часу потрібно від нас?</summary><p>Основну роботу беремо на себе. Від вас потрібна участь у розборі процесів і навчанні.</p></details>
+      </div>
+      <aside class="faq-next">
+        <p class="faq-next-k">Що буде після заявки</p>
+        <ol>
+          <li><b>Узгоджуємо час</b><span>Звʼязуємося того ж дня і пропонуємо кілька вікон.</span></li>
+          <li><b>Година розбору</b><span>Проходимо ваші процеси від звернення до рахунку.</span></li>
+          <li><b>Розрахунок за день</b><span>Скільки годин забирає ручна робота і що прибрати першим.</span></li>
+          <li><b>Рішення за вами</b><span>Розрахунок лишається у вас, навіть якщо нічого не замовите.</span></li>
+        </ol>
+        <a class="btn" href="#contact">Записатися на безкоштовний розбір</a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 12. КОНТАКТ: ФОРМА + TELEGRAM + VIBER -->
+<section class="final" id="contact">
+  <div class="container final-grid">
+    <div>
+      <h2>Скільки годин ваша практика втрачає на рутину?</h2>
+      <p class="final-lead">Запишіться на безкоштовний розбір. Розрахунок лишається у вас, навіть якщо ви нічого не замовите.</p>
+      <div class="channels">
+        <a class="channel" href="https://t.me/ai_legal_practice_bot?start=contact" target="_blank" rel="noopener">
+          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#2AABEE"/><path fill="#fff" d="M5.4 11.8l11-4.3c.5-.2 1 .1.8.9l-1.9 8.9c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-2.9 5.4-4.9c.2-.2 0-.3-.4-.1l-6.6 4.2-2.8-.9c-.6-.2-.6-.6.2-.9z"/></svg>
+          <div><b>Записатися в Telegram</b><span>Бот запитає імʼя й номер, відповідаємо того ж дня</span></div>
+        </a>
+        <a class="channel" href="viber://chat?number=%2B380987541154">
+          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#7360F2"/><path fill="#fff" d="M9.2 6.6c-.3-.3-.8-.3-1.1 0l-.8.8c-.6.6-.7 1.6-.2 2.6 1.2 2.4 3.1 4.3 5.5 5.5 1 .5 2 .4 2.6-.2l.8-.8c.3-.3.3-.8 0-1.1l-1.5-1.5c-.3-.3-.8-.3-1.1 0l-.6.6c-1.3-.6-2.3-1.6-2.9-2.9l.6-.6c.3-.3.3-.8 0-1.1L9.2 6.6z"/></svg>
+          <div><b>Написати у Viber</b><span>+380 (98) 754-11-54, той самий номер для дзвінків</span></div>
+        </a>
+      </div>
+      <p class="or">Або залиште заявку у формі, і ми звʼяжемося, щоб узгодити час розбору.</p>
+    </div>
+
+    <form class="form" id="leadForm" action="https://orbita-landing-bot-898072850183.us-central1.run.app/lead" method="post" novalidate>
+      <h3>Заявка на безкоштовний розбір</h3>
+      <p class="sub">Займе менше хвилини.</p>
+
+      <div class="field">
+        <span id="audLabel" style="font-size:14px;font-weight:650;color:var(--navy)">Хто ви</span>
+        <div class="seg" role="radiogroup" aria-labelledby="audLabel">
+          <label><input class="visually-hidden" type="radio" name="audience" value="Юридична компанія" checked><span>Юридична компанія</span></label>
+          <label><input class="visually-hidden" type="radio" name="audience" value="Власна практика"><span>Власна практика</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fName">Імʼя</label>
+        <input id="fName" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="fPhone">Телефон</label>
+        <input id="fPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+380" required>
+      </div>
+      <div class="field" id="teamField">
+        <label for="fTeam">Скільки юристів у команді</label>
+        <input id="fTeam" name="team_size" type="number" inputmode="numeric" min="1">
+      </div>
+      <div class="field">
+        <label for="fMsg">Яка задача забирає найбільше часу? (можна не заповнювати)</label>
+        <textarea id="fMsg" name="message"></textarea>
+      </div>
+
+      <input type="hidden" name="calc_hours" id="hCalcHours">
+      <input type="hidden" name="pains" id="hPains">
+      <input type="hidden" name="page" value="Legal AI">
+      <div class="visually-hidden" aria-hidden="true"><label>Не заповнюйте<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <button class="btn large block" type="submit" id="fSubmit">Записатися на безкоштовний розбір</button>
+      <p class="legal">Натискаючи кнопку, ви погоджуєтесь на обробку контактних даних для звʼязку щодо розбору.</p>
+      <div class="form-msg" id="fMsgBox" role="status" hidden></div>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ВІДЕО-ЗВЕРНЕННЯ: бабл внизу зліва, по кліку збільшується -->
+<!-- ТИМЧАСОВО ПРИХОВАНО. Щоб увімкнути: прибрати атрибут hidden у рядку нижче і поставити preload="metadata" у <video>. -->
+<!-- Файл: video/bubble.mp4 (вертикальне 9:16). -->
+<div class="vbubble" id="vbubble" hidden>
+  <button type="button" class="vbubble-close" id="vbubbleClose" aria-label="Закрити відео">×</button>
+  <button type="button" class="vbubble-frame" id="vbubbleOpen" aria-label="Відкрити відеозвернення">
+    <video id="vbubbleVideo" src="video/bubble.mp4" muted loop playsinline preload="none"></video>
+  </button>
+  <button type="button" class="vbubble-sound" id="vbubbleSound" aria-label="Увімкнути звук" hidden>Увімкнути звук</button>
+</div>
+
+<!-- ПОПАП: стратегічна сесія. Зʼявляється через 2 хв активного перегляду, один раз за сесію браузера.
+     Не показується, якщо людина вже залишила заявку. Тест: додати ?popup=1 до адреси сторінки (зʼявиться через 3 с). -->
+<div class="popup-overlay" id="sessionPopup" hidden>
+  <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+    <button type="button" class="popup-close" id="popupClose" aria-label="Закрити">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+    <div class="popup-side">
+      <p class="popup-kicker">Безкоштовно · 60 хвилин</p>
+      <h2 id="popupTitle">Стратегічна сесія з автоматизації вашої практики</h2>
+      <p class="popup-lead">Година зі спеціалістом ORBITA IX. Розкладаємо роботу вашої компанії на процеси й показуємо, де AI справді заощадить час.</p>
+      <ul class="popup-points">
+        <li><span class="popup-num">01</span><span>Знаходимо процеси, які забирають найбільше годин</span></li>
+        <li><span class="popup-num">02</span><span>Рахуємо, скільки часу й грошей можна звільнити</span></li>
+        <li><span class="popup-num">03</span><span>Визначаємо, з якого процесу почати і скільки займе впровадження</span></li>
+      </ul>
+      <p class="popup-keep">Розрахунок лишається у вас, навіть якщо ви нічого не замовите.</p>
+    </div>
+    <form class="popup-form" id="popupForm" action="https://orbita-landing-bot-898072850183.us-central1.run.app/lead" method="post" novalidate>
+      <p class="popup-form-h">Залиште контакти. Звʼяжемося того ж дня й запропонуємо зручний час.</p>
+      <div class="seg" role="radiogroup" aria-label="Хто ви">
+        <label><input class="visually-hidden" type="radio" name="audience" value="Юридична компанія" checked><span>Юридична компанія</span></label>
+        <label><input class="visually-hidden" type="radio" name="audience" value="Власна практика"><span>Власна практика</span></label>
+      </div>
+      <div class="field">
+        <label for="pName">Імʼя</label>
+        <input id="pName" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="pPhone">Телефон</label>
+        <input id="pPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380" required>
+      </div>
+      <input type="hidden" name="message" value="Стратегічна сесія (попап)">
+      <input type="hidden" name="page" value="Legal AI — попап «Стратегічна сесія»">
+      <input type="hidden" name="pains" id="pPains">
+      <div class="visually-hidden" aria-hidden="true"><label>Не заповнюйте<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn large block" type="submit" id="pSubmit">Записатися на стратегічну сесію</button>
+      <p class="popup-legal">Без зобовʼязань. Дані використовуємо лише для звʼязку щодо сесії.</p>
+      <div class="form-msg" id="pMsg" role="status" hidden></div>
+    </form>
   </div>
 </div>
 
-<div class="dock" id="dock" aria-hidden="true">
-  <p class="dock-t">Перша година — безкоштовно</p>
-  <a class="dock-b" href="#next" data-cta="dock" tabindex="-1">Записатись на розбір</a>
-</div>
+<!-- Перегляд скріна кроку (відкривається з блоку «Приклад процесу») -->
 
-<div class="wrap">
-  <footer class="bot">
-    <p>Вартість і строки розраховуються індивідуально під потреби компанії — після безкоштовного розбору процесів.</p>
-  </footer>
-</div>
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <img src="img/orbita-ix-logo-inverse.png" alt="ORBITA IX" width="165" height="32">
+      <p>Автоматизація юридичних бізнес-процесів. Legal AI від ORBITA IX.</p>
+    </div>
+    <div class="footer-contacts">
+      <a href="tel:+380987541154">+380 (98) 754-11-54</a>
+      <a href="mailto:ai.legal.xv@gmail.com">ai.legal.xv@gmail.com</a>
+      <a href="https://orbita-ix.com/" target="_blank" rel="noopener">orbita-ix.com</a>
+    </div>
+  </div>
+  <div class="container footer-note">© 2026 ORBITA IX. Вартість і строки розраховуються індивідуально після безкоштовного розбору процесів.</div>
+</footer>
 
 <script>
-(function () {
-  var slow = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(function(){
+  /* ---------- Сторінка подяки після заявки ---------- */
+  var THANKS_URL = 'thanks.html';
 
-  // Поява блоків при прокручуванні
-  var rv = document.querySelectorAll('.rv');
-  if (slow || !('IntersectionObserver' in window)) {
-    rv.forEach(function (el) { el.classList.add('in'); });
-  } else {
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    rv.forEach(function (el) { io.observe(el); });
-  }
-
-  // Лічильники: накручуються, коли смуга справді зʼявляється на екрані.
-  // Два незалежні тригери (спостерігач і перевірка при прокрутці) і жодного
-  // таймера — інакше числа встигають стати фінальними ще до прокрутки.
-  var nums = Array.prototype.slice.call(document.querySelectorAll('.stat b'));
-  function runCount(el) {
-    if (el.dataset.done) return;
-    el.dataset.done = '1';
-    var stat = el.getAttribute('data-static');
-    if (stat) { el.textContent = stat; return; }
-    var to = parseFloat(el.getAttribute('data-to')) || 0;
-    var suf = el.getAttribute('data-suffix') || '';
-    if (slow) { el.textContent = to + suf; return; }
-    var t0 = null, dur = 1200;
-    function step(ts) {
-      if (!t0) t0 = ts;
-      var p = Math.min((ts - t0) / dur, 1);
-      el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + suf;
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  nums.forEach(function (el) { el.textContent = '0' + (el.getAttribute('data-suffix') || ''); });
-
-  if (slow) {
-    nums.forEach(runCount);
-  } else {
-    var sweep = function () {
-      var vh = window.innerHeight || document.documentElement.clientHeight;
-      var left = false;
-      nums.forEach(function (el) {
-        if (el.dataset.done) return;
-        var r = el.getBoundingClientRect();
-        if (r.top < vh - 70 && r.bottom > 40) runCount(el); else left = true;
-      });
-      if (!left) {
-        window.removeEventListener('scroll', sweep);
-        window.removeEventListener('resize', sweep);
-      }
+  /* ---------- Приклад процесу: задача → оркестратор → виконавці → результат ---------- */
+  (function () {
+    var of = document.getElementById('of'); if (!of) return;
+    var map = document.getElementById('ofMap'), svg = document.getElementById('ofLines'), dot = document.getElementById('ofDot'),
+        bar = document.getElementById('ofBar'), status = document.getElementById('ofStatus'), resS = document.getElementById('ofResS');
+    var task = map.querySelector('.of-task'), orch = map.querySelector('.of-orch'), res = map.querySelector('.of-res');
+    var exs = [].slice.call(map.querySelectorAll('.of-ex'));
+    var NS = 'http://www.w3.org/2000/svg';
+    var TXT = {
+      task: 'Задача: перевірити строки',
+      orch: 'Оркестратор розбиває задачу на кроки',
+      ex: ['Працює: AI-модель · читає ухвалу й рахує строк', 'Працює: Документи · готує чернетку за шаблоном',
+           'Працює: Ваші програми · вносить строк у календар і CRM', 'Працює: Пошта й месенджери · надсилає нагадування юристу'],
+      res: 'Готово: строк у календарі, юрист отримав нагадування'
     };
+    var pIn, pOrch, pOut = [], pTo = [];
+    function box(el) { var m = map.getBoundingClientRect(), r = el.getBoundingClientRect(); return { l: r.left - m.left, t: r.top - m.top, r: r.right - m.left, b: r.bottom - m.top, cx: r.left - m.left + r.width / 2, cy: r.top - m.top + r.height / 2 }; }
+    function curve(a, b, vertical) {
+      if (vertical) { var my = (a.y + b.y) / 2; return 'M' + a.x + ' ' + a.y + ' C' + a.x + ' ' + my + ' ' + b.x + ' ' + my + ' ' + b.x + ' ' + b.y; }
+      var mx = (a.x + b.x) / 2; return 'M' + a.x + ' ' + a.y + ' C' + mx + ' ' + a.y + ' ' + mx + ' ' + b.y + ' ' + b.x + ' ' + b.y;
+    }
+    function mk(d) { var p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); svg.appendChild(p); return p; }
+    function draw() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var T = box(task), O = box(orch), R = box(res), v = R.t > O.b;   // вертикальна схема на телефоні
+      function out(B) { return v ? { x: B.cx, y: B.b } : { x: B.r, y: B.cy }; }
+      function inn(B) { return v ? { x: B.cx, y: B.t } : { x: B.l, y: B.cy }; }
+      pIn = mk(curve(out(T), inn(O), v));
+      pOut = []; pTo = [];
+      exs.forEach(function (e) { var E = box(e); pOut.push(mk(curve(out(O), inn(E), v))); pTo.push(mk(curve(out(E), inn(R), v))); });
+      pOrch = null;
+    }
+    // сценарій: 0 задача, 1 оркестратор, 2..5 виконавці, 6 результат
+    var STEPS = 7, STEP = 1700, t0 = null, visible = false, last = -1;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function cls(el, c, on) { el.classList.toggle(c, on); }
+    function show(k) {
+      cls(task, 'on', k === 0); cls(task, 'done', k > 0);
+      cls(orch, 'on', k === 1); cls(orch, 'done', k > 1);
+      exs.forEach(function (e, i) { cls(e, 'on', k === i + 2); cls(e, 'done', k > i + 2); });
+      cls(res, 'ready', k === 6); resS.textContent = k === 6 ? 'готово' : 'очікує';
+      pIn.setAttribute('class', k === 0 ? 'on' : 'done');
+      pOut.forEach(function (p, i) { p.setAttribute('class', k === i + 2 ? 'on' : (k > i + 2 ? 'done' : '')); });
+      pTo.forEach(function (p, i) { p.setAttribute('class', k === 6 || k > i + 2 ? 'done' : ''); });
+      status.textContent = k === 0 ? TXT.task : k === 1 ? TXT.orch : k === 6 ? TXT.res : TXT.ex[k - 2];
+    }
+    function dotOn(path, q) {
+      if (!path) { dot.classList.remove('show'); return; }
+      var L = path.getTotalLength(), pt = path.getPointAtLength(L * q);
+      dot.style.left = pt.x + 'px'; dot.style.top = pt.y + 'px'; dot.classList.add('show');
+    }
+    draw();
+    if (reduce) { show(6); bar.style.width = '100%'; return; }
+    show(0);
+    function frame(ts) {
+      if (visible) {
+        if (t0 === null) t0 = ts - (last >= 0 ? last * STEP : 0);
+        var e = (ts - t0) % (STEPS * STEP + 1400), k = Math.min(Math.floor(e / STEP), 6), q = (e % STEP) / STEP;
+        if (k !== last) { last = k; show(k); }
+        bar.style.width = Math.min(e / (STEPS * STEP) * 100, 100) + '%';
+        var ease = Math.min(q / 0.6, 1);
+        if (k === 0) dotOn(pIn, ease);
+        else if (k >= 2 && k <= 5) dotOn(pOut[k - 2], ease);
+        else if (k === 6) dotOn(null);
+        else dot.classList.remove('show');
+      } else { t0 = null; }
+      requestAnimationFrame(frame);
+    }
     if ('IntersectionObserver' in window) {
-      var io2 = new IntersectionObserver(function (es) {
-        es.forEach(function (e) { if (e.isIntersecting) { runCount(e.target); io2.unobserve(e.target); } });
-      }, { threshold: 0.35 });
-      nums.forEach(function (el) { io2.observe(el); });
-    }
-    window.addEventListener('scroll', sweep, { passive: true });
-    window.addEventListener('resize', sweep);
-  }
+      new IntersectionObserver(function (en) { visible = en[0].isIntersecting; if (visible) draw(), show(Math.max(last, 0)); }, { threshold: 0.3 }).observe(of);
+    } else { visible = true; }
+    var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { draw(); show(Math.max(last, 0)); }, 120); });
+    requestAnimationFrame(frame);
+  })();
 
-
-  // Міні-ролик: документи накидуються в базу, далі пошук і готовий документ
-  var film = document.getElementById('film');
-  var dBtn = document.getElementById('demoBtn');
-  if (film && dBtn) {
-    var fDb = document.getElementById('filmDb');
-    var fFill = document.getElementById('filmFill');
-    var fDbLab = document.getElementById('filmDbLab');
-    var fSearch = document.getElementById('filmSearch');
-    var fQuery = document.getElementById('filmQuery');
-    var fCar = document.getElementById('filmCar');
-    var fHits = document.getElementById('filmHits');
-    var fFinal = document.getElementById('filmFinal');
-    var fCap = document.getElementById('filmCap');
-    var fSub = document.getElementById('filmSub');
-
-    var QUERY = 'договір поставки з відстрочкою платежу';
-    var HITS = ['Договір поставки · 2024', 'Специфікація · зразок', 'Претензія · формулювання'];
-    var TOTAL = 12480, N = 26;
-    var jobs = [], flying = [], played = false;
-
-    function stop() { jobs.forEach(function (j) { clearTimeout(j); clearInterval(j); }); jobs = []; }
-    function at(ms, fn) { jobs.push(setTimeout(fn, ms)); }
-
-    function clearStage() {
-      flying.forEach(function (el) { el.remove(); }); flying = [];
-      fHits.innerHTML = '';
-      fFill.style.height = '0';
-      fDb.classList.remove('on');
-      fSearch.classList.remove('on');
-      fFinal.classList.remove('on');
-      fQuery.textContent = '';
-      fCar.style.display = 'none';
-      fDbLab.textContent = 'база компанії';
-    }
-
-    function dbPoint() {
-      var f = film.getBoundingClientRect(), d = fDb.getBoundingClientRect();
-      return { x: d.left - f.left + d.width / 2, y: d.top - f.top + 26 };
-    }
-
-    // Двофазний політ: спершу до точки над базою, потім падіння всередину
-    function toss(i) {
-      var isFolder = i % 3 === 2;
-      var el = document.createElement('div');
-      el.className = 'fly ' + (isFolder ? 'folder' : 'sheet');
-      if (!isFolder) el.innerHTML = '<i></i><i></i><i></i>';
-      film.appendChild(el);
-      flying.push(el);
-
-      var w = film.clientWidth, h = film.clientHeight, p = dbPoint();
-      var fromLeft = i % 2 === 0;
-      var sx = fromLeft ? -60 : w + 60;
-      var sy = 40 + Math.random() * (h * 0.6);
-      var rot = (Math.random() * 70 - 35);
-      var hoverX = p.x - 14 + (Math.random() * 44 - 22);
-      var hoverY = p.y - 74 - Math.random() * 26;
-
-      el.style.transform = 'translate(' + sx + 'px,' + sy + 'px) rotate(' + rot + 'deg)';
-
-      requestAnimationFrame(function () {
-        el.style.transition = 'transform .52s cubic-bezier(.25,.7,.35,1), opacity .18s ease';
-        el.style.opacity = '1';
-        el.style.transform = 'translate(' + hoverX + 'px,' + hoverY + 'px) rotate(' + (rot / 6) + 'deg)';
-      });
-
-      at(540, function () {
-        el.style.transition = 'transform .34s cubic-bezier(.5,0,.85,.6), opacity .2s ease .16s';
-        el.style.transform = 'translate(' + (p.x - 14) + 'px,' + (p.y + 8) + 'px) rotate(0deg) scale(.28)';
-        el.style.opacity = '0';
-      });
-      at(900, function () {
-        el.remove();
-        fDb.classList.add('hit-pulse');
-        setTimeout(function () { fDb.classList.remove('hit-pulse'); }, 300);
-      });
-    }
-
-    function showFinal() {
-      fDb.classList.add('on');
-      fFill.style.height = '98px';
-      fDbLab.textContent = TOTAL.toLocaleString('uk-UA') + ' документів';
-      fSearch.classList.add('on');
-      fQuery.textContent = QUERY;
-      fHits.innerHTML = '';
-      HITS.forEach(function (t) {
-        var el = document.createElement('div');
-        el.className = 'hit on'; el.textContent = t; fHits.appendChild(el);
-      });
-      fFinal.classList.add('on');
-      fCap.textContent = 'Документ зібрано з ваших напрацювань';
-      fSub.textContent = 'юристу лишається перевірити';
-      dBtn.textContent = 'Показати ще раз';
-      dBtn.disabled = false;
-    }
-
-    function play() {
-      stop(); clearStage();
-      dBtn.disabled = true;
-      if (slow) { showFinal(); return; }
-
-      fCap.textContent = 'Збираємо документи компанії';
-      fSub.textContent = 'договори · акти · заяви · довіреності';
-      fDb.classList.add('on');
-
-      var seen = 0;
-      for (var i = 0; i < N; i++) {
-        (function (k) {
-          at(k * 95, function () {
-            toss(k);
-            seen++;
-            fFill.style.height = Math.round(seen / N * 98) + 'px';
-            fDbLab.textContent = Math.round(seen / N * TOTAL).toLocaleString('uk-UA') + ' документів';
-          });
-        })(i);
+  /* ---------- Слайдери на телефоні й планшеті (до 900px) ---------- */
+  (function () {
+    var mq = window.matchMedia('(max-width:900px)');
+    var AR = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>';
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    document.querySelectorAll('[data-slider]').forEach(function (track) {
+      var items = [].slice.call(track.children), n = items.length, cur = -1, raf = null, word = track.getAttribute('data-slider');
+      var nav = document.createElement('div'); nav.className = 'sl-nav';
+      nav.innerHTML = '<p class="sl-count" aria-live="polite"><b>01</b> / ' + pad(n) + '</p>' +
+        '<span class="sl-dots" aria-hidden="true">' + items.map(function () { return '<i></i>'; }).join('') + '</span>' +
+        '<button type="button" class="sl-btn sl-prev" aria-label="Попередня">' + AR + '</button>' +
+        '<button type="button" class="sl-btn sl-next" aria-label="Наступна">' + AR + '</button>';
+      track.parentNode.insertBefore(nav, track.nextSibling);
+      var cnt = nav.querySelector('.sl-count b'), dots = [].slice.call(nav.querySelectorAll('.sl-dots i')),
+          prev = nav.querySelector('.sl-prev'), next = nav.querySelector('.sl-next');
+      items.forEach(function (it, i) { it.setAttribute('aria-roledescription', 'слайд'); it.setAttribute('aria-label', word + ' ' + (i + 1) + ' з ' + n); });
+      function pos(i) { return items[i].offsetLeft - items[0].offsetLeft; }
+      function index() {
+        var x = track.scrollLeft, best = 0, d = Infinity;
+        if (x > 4 && x >= track.scrollWidth - track.clientWidth - 4) return n - 1;
+        items.forEach(function (it, i) { var dd = Math.abs(pos(i) - x); if (dd < d) { d = dd; best = i; } });
+        return best;
       }
-
-      var tReady = N * 95 + 900;
-      at(tReady, function () {
-        fCap.textContent = 'База готова';
-        fSub.textContent = TOTAL.toLocaleString('uk-UA') + ' документів, які вже є у вашій компанії';
-      });
-
-      var tSearch = tReady + 800;
-      at(tSearch, function () {
-        fCap.textContent = 'Шукаємо потрібне формулювання';
-        fSub.textContent = '';
-        fSearch.classList.add('on');
-        fCar.style.display = 'inline-block';
-        var k = 0;
-        var iv = setInterval(function () {
-          fQuery.textContent = QUERY.slice(0, ++k);
-          if (k >= QUERY.length) { clearInterval(iv); fCar.style.display = 'none'; }
-        }, 36);
-        jobs.push(iv);
-      });
-
-      var tHits = tSearch + QUERY.length * 36 + 450;
-      at(tHits, function () {
-        fCap.textContent = 'Знайдено у вашій базі';
-        fSub.textContent = '3 схожі документи за секунду';
-        HITS.forEach(function (t, i) {
-          var el = document.createElement('div');
-          el.className = 'hit'; el.textContent = t; fHits.appendChild(el);
-          at(i * 200, function () { el.classList.add('on'); });
+      var lock = -1;   // поки слайдер їде до вибраної картки програмно, проміжні позиції не рахуємо
+      function paint(i, silent) {
+        if (i === cur) return; cur = i;
+        cnt.textContent = pad(i + 1);
+        dots.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+        prev.disabled = i === 0; next.disabled = i === n - 1;
+        if (!silent) track.dispatchEvent(new CustomEvent('sl:change', { detail: i }));
+      }
+      function go(i) { i = Math.max(0, Math.min(n - 1, i)); track.scrollTo({ left: pos(i), behavior: 'smooth' }); }
+      track.slTo = function (i) { if (mq.matches && i !== index()) { lock = i; paint(i, true); go(i); } };
+      track.addEventListener('scroll', function () {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          raf = null; var i = index();
+          if (lock >= 0) { if (i === lock) lock = -1; return; }
+          paint(i);
         });
-      });
-
-      at(tHits + 1250, function () {
-        fCap.textContent = 'Документ зібрано з ваших напрацювань';
-        fSub.textContent = 'юристу лишається перевірити';
-        fFinal.classList.add('on');
-        dBtn.textContent = 'Показати ще раз';
-        dBtn.disabled = false;
-      });
-    }
-
-    dBtn.addEventListener('click', play);
-    if ('IntersectionObserver' in window) {
-      var io3 = new IntersectionObserver(function (es) {
-        es.forEach(function (e) {
-          if (e.isIntersecting && !played) { played = true; play(); io3.unobserve(e.target); }
-        });
-      }, { threshold: 0.3 });
-      io3.observe(film);
-    }
-  }
-
-  // Калькулятор економії
-  var cRate = document.getElementById('cRate');
-  var cHours = document.getElementById('cHours');
-  var cShare = document.getElementById('cShare');
-  if (cRate && cHours && cShare) {
-    var fmt = new Intl.NumberFormat('uk-UA');
-    var cShareVal = document.getElementById('cShareVal');
-    var cHoursOut = document.getElementById('cHoursOut');
-    var cMonth = document.getElementById('cMonth');
-    var cYear = document.getElementById('cYear');
-
-    function hourWord(n) {
-      var d = n % 10, dd = n % 100;
-      if (d === 1 && dd !== 11) return 'година';
-      if (d >= 2 && d <= 4 && (dd < 12 || dd > 14)) return 'години';
-      return 'годин';
-    }
-
-    function calc() {
-      var rate = Math.max(0, parseFloat(cRate.value) || 0);
-      var hrs = Math.max(0, parseFloat(cHours.value) || 0);
-      var share = parseInt(cShare.value, 10) / 100;
-      var perMonth = Math.round(hrs * 4.33 * share);
-      var money = Math.round(perMonth * rate);
-      cShareVal.textContent = cShare.value + '%';
-      cHoursOut.textContent = fmt.format(perMonth) + ' ' + hourWord(perMonth);
-      cMonth.textContent = fmt.format(money) + ' ₴';
-      cYear.textContent = fmt.format(money * 12) + ' ₴';
-    }
-    [cRate, cHours, cShare].forEach(function (el) {
-      el.addEventListener('input', calc);
-      el.addEventListener('change', calc);
+      }, { passive: true });
+      ['touchstart', 'pointerdown', 'wheel'].forEach(function (ev) { track.addEventListener(ev, function () { lock = -1; }, { passive: true }); });
+      prev.addEventListener('click', function () { lock = -1; go(cur - 1); });
+      next.addEventListener('click', function () { lock = -1; go(cur + 1); });
+      function sync() { if (mq.matches) items.forEach(function (it) { it.classList.add('in'); }); }
+      if (mq.addEventListener) mq.addEventListener('change', sync);
+      paint(0, true); sync();
     });
-    calc();
-  }
+  })();
 
-  // Плаваюча кнопка: видима між шапкою та блоком контактів
-  var dock = document.getElementById('dock');
-  var hero = document.querySelector('.hero');
-  var next = document.getElementById('next');
-  if (dock && hero && next && 'IntersectionObserver' in window) {
-    var link = dock.querySelector('.dock-b');
-    var pastHero = false, atContact = false;
-    function sync() {
-      var show = pastHero && !atContact;
-      dock.classList.toggle('in', show);
-      dock.setAttribute('aria-hidden', String(!show));
-      link.tabIndex = show ? 0 : -1;
+  /* ---------- Ціни: спідометр реагує на план ---------- */
+  (function () {
+    var pg = document.getElementById('pg'), pcs = document.getElementById('pcs'); if (!pg || !pcs) return;
+    var PLANS = [{n:'Розбір і стартовий набір',p:450,t:'1–5 юристів',m:'Супровід 30 днів',d:'Для невеликих практик, які хочуть автоматизувати три процеси, що забирають найбільше часу.'},{n:'Повний цикл справи',p:1200,t:'5–15 юристів',m:'Супровід 45 днів',d:'Для команд, яким потрібно звʼязати документи, строки й рахунки в один ланцюг.'},{n:'Автоматизація всієї компанії',p:2600,lab:'Договірна',note:'Вартість розраховуємо після розбору',t:'понад 15 юристів',m:'Супровід 60 днів',d:'Для компаній із кількома практиками, яким потрібна автоматизація по всіх напрямах і системах.'}], MAX = 3000;
+    var cards = [].slice.call(pcs.querySelectorAll('.pc')), marks = [].slice.call(pg.querySelectorAll('.g-mark'));
+    var needle = document.getElementById('gNeedle'), fill = document.getElementById('gFill');
+    var k = document.getElementById('pgK'), nm = document.getElementById('pgName'), pr = document.getElementById('pgPrice'), ds = document.getElementById('pgDesc');
+    var nt = document.getElementById('pgNote'), tm = document.getElementById('pgTeam'), tr = document.getElementById('pgTerm');
+    var tb = [].slice.call(document.querySelectorAll('.pg-team button, .pt-tab'));
+    var ptc = [].slice.call(document.querySelectorAll('#pt [data-i]'));
+    var cur = -1, shown = 0, raf = null;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function fmt(v) { return '$' + Math.round(v).toLocaleString('uk-UA').replace(/\s/g, ' '); }
+    function count(to) {
+      if (raf) cancelAnimationFrame(raf);
+      if (reduce) { shown = to; pr.textContent = fmt(to); return; }
+      var from = shown, t0 = null;
+      function f(ts) { if (!t0) t0 = ts; var q = Math.min((ts - t0) / 900, 1); q = 1 - Math.pow(1 - q, 3);
+        shown = from + (to - from) * q; pr.textContent = fmt(shown); if (q < 1) raf = requestAnimationFrame(f); }
+      raf = requestAnimationFrame(f);
     }
-    new IntersectionObserver(function (es) { pastHero = !es[0].isIntersecting; sync(); },
-      { threshold: 0 }).observe(hero);
-    new IntersectionObserver(function (es) { atContact = es[0].isIntersecting; sync(); },
-      { threshold: 0 }).observe(next);
-  }
+    function set(i) {
+      if (i === cur) return; cur = i;
+      var pl = PLANS[i], q = pl.p / MAX;
+      needle.style.transform = 'rotate(' + (q * 180) + 'deg)';
+      fill.style.strokeDashoffset = 1 - q;
+      cards.forEach(function (c, j) { c.classList.toggle('on', j === i); });
+      marks.forEach(function (m, j) { m.classList.toggle('on', j === i); });
+      k.textContent = 'План ' + (i + 1) + ' з ' + PLANS.length;
+      [nm, ds].forEach(function (el) { el.classList.remove('pg-swap'); void el.offsetWidth; el.classList.add('pg-swap'); });
+      nm.textContent = pl.n; ds.textContent = pl.d;
+      if (pl.lab) { if (raf) cancelAnimationFrame(raf); shown = pl.p; pr.textContent = pl.lab; } else count(pl.p);
+      if (nt) nt.textContent = pl.note || 'Разова стартова ціна в USD';
+      if (tm) tm.textContent = pl.t; if (tr) tr.textContent = pl.m;
+      tb.forEach(function (b) { b.setAttribute('aria-pressed', +b.getAttribute('data-i') === i ? 'true' : 'false'); });
+      ptc.forEach(function (c) { c.classList.toggle('on', +c.getAttribute('data-i') === i); });
+      if (pcs.slTo) pcs.slTo(i);
+    }
+    pcs.addEventListener('sl:change', function (e) { set(e.detail); });
+    tb.forEach(function (b) { b.addEventListener('click', function () { set(+b.getAttribute('data-i')); }); });
+    cards.forEach(function (c, j) {
+      c.addEventListener('mouseenter', function () { set(j); });
+      c.addEventListener('focus', function () { set(j); });
+      c.addEventListener('click', function () { set(j); });
+    });
+    marks.forEach(function (m, j) { m.style.cursor = 'pointer'; m.addEventListener('click', function () { set(j); }); });
+    // стрілка «доїжджає» до рекомендованого плану, коли блок зʼявляється на екрані
+    needle.style.transform = 'rotate(0deg)'; fill.style.strokeDashoffset = 1;
+    if ('IntersectionObserver' in window && !reduce) {
+      var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { if (cur < 0) set(1); io.disconnect(); } }, { threshold: 0.4 });
+      io.observe(pg);
+    } else { set(1); }
+  })();
 
-  // Кнопки «розбір»: ведуть до блоку контактів, де людина сама вибирає канал
-  // (Telegram, телефон, пошта) — юрист із робочого комп'ютера, де Telegram
-  // недоступний, не втрачається. Мітка джерела переноситься в посилання бота,
-  // тому видно, яка кнопка привела людину: hero, dock або contact.
-  // Без JS кнопка все одно прокрутить до контактів — href="#next".
-  var tgCta = document.getElementById('tg-cta');
-  document.querySelectorAll('[data-cta]').forEach(function (b) {
-    b.addEventListener('click', function (e) {
-      if (tgCta) {
-        tgCta.href = 'https://t.me/ai_legal_practice_bot?start='
-                   + b.getAttribute('data-cta');
+  /* ---------- Технології: підсвітка шару ---------- */
+  (function () {
+    var ts = document.getElementById('ts'); if (!ts) return;
+    var layers = [].slice.call(ts.querySelectorAll('.ts-layer')), cats = [].slice.call(ts.querySelectorAll('.ts-cat'));
+    var cur = -1, touched = false, timer = null, visible = false;
+    function set(i) {
+      cur = i;
+      layers.forEach(function (l) { l.classList.toggle('on', +l.getAttribute('data-i') === i); });
+      cats.forEach(function (c) { c.classList.toggle('on', +c.getAttribute('data-i') === i); });
+    }
+    function stop() { touched = true; if (timer) { clearInterval(timer); timer = null; } }
+    layers.concat(cats).forEach(function (el) {
+      var i = +el.getAttribute('data-i');
+      el.addEventListener('mouseenter', function () { stop(); set(i); });
+      el.addEventListener('focus', function () { stop(); set(i); });
+      el.addEventListener('click', function () { stop(); set(i); });
+    });
+    set(0);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) {
+        visible = e[0].isIntersecting;
+        if (visible && !touched && !timer) timer = setInterval(function () { if (visible) set((cur + 1) % cats.length); }, 2600);
+      }, { threshold: 0.35 }).observe(ts);
+    }
+  })();
+
+  /* ---------- Калькулятор економії ---------- */
+  var sRate = document.getElementById('sRate'), sHours = document.getElementById('sHours'),
+      sShare = document.getElementById('sShare'), sShareOut = document.getElementById('sShareOut');
+  var hidden = document.getElementById('hCalcHours');
+  var nf = function (n) { return Math.round(n).toLocaleString('uk-UA').replace(/\u00a0/g, ' '); };
+  function hoursWord(n) {
+    var n10 = n % 10, n100 = n % 100;
+    if (n10 === 1 && n100 !== 11) return 'година';
+    if (n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return 'години';
+    return 'годин';
+  }
+  function calc() {
+    var rate = Math.max(0, parseFloat(sRate.value) || 0),
+        hours = Math.max(0, parseFloat(sHours.value) || 0),
+        share = (parseFloat(sShare.value) || 0) / 100;
+    var exactHours = hours * share * 52 / 12;
+    var monthHours = Math.round(exactHours);
+    var raw = exactHours * rate;
+    var step = raw >= 10000 ? 1000 : 100;           // округлення: це оцінка, а не рахунок
+    var monthMoney = Math.round(raw / step) * step;
+    var yearMoney = monthMoney * 12;
+    sShareOut.textContent = Math.round(share * 100) + '%';
+    sShare.style.setProperty('--fill', ((share * 100 - 10) / 80 * 100) + '%');
+    document.getElementById('sMonthHours').textContent = monthHours + ' ' + hoursWord(monthHours);
+    document.getElementById('sMonthMoney').textContent = nf(monthMoney) + ' ₴';
+    document.getElementById('sYearMoney').textContent = nf(yearMoney) + ' ₴';
+    if (hidden) hidden.value = 'ставка ' + rate + ' ₴/год, рутина ' + hours + ' год/тиж, частка ' + Math.round(share * 100) +
+      '% → ' + monthHours + ' год/міс, ' + nf(monthMoney) + ' ₴/міс, ' + nf(yearMoney) + ' ₴/рік';
+  }
+  [sRate, sHours, sShare].forEach(function (el) { el.addEventListener('input', calc); });
+  calc();
+
+  /* ---------- Відгуки: таби ---------- */
+  (function () {
+    var rt = document.getElementById('rt'); if (!rt) return;
+    var tabs = [].slice.call(rt.querySelectorAll('.rt-tab')), panels = [].slice.call(rt.querySelectorAll('.rt-panel'));
+    var cur = document.getElementById('rtCur'), i0 = 0;
+    function fitMore(p) {   // кнопку «читати повністю» показуємо лише для довгих відгуків
+      var q = p.querySelector('.rt-quote'), b = p.querySelector('.rt-full'), t = q.querySelector('p');
+      q.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); b.textContent = 'Читати відгук повністю';
+      b.hidden = t.scrollHeight <= t.clientHeight + 2;
+    }
+    function go(i, focus) {
+      i0 = (i + tabs.length) % tabs.length;
+      tabs.forEach(function (t, k) { var on = k === i0; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+      panels.forEach(function (p, k) { p.hidden = k !== i0; });
+      cur.textContent = String(i0 + 1).padStart(2, '0');
+      fitMore(panels[i0]);
+      var bar = tabs[i0].parentElement, t = tabs[i0];
+      if (bar && bar.scrollWidth > bar.clientWidth) {   // прокручуємо лише смугу вкладок, сторінку не чіпаємо
+        var l = t.offsetLeft, r = l + t.offsetWidth;
+        if (l < bar.scrollLeft) bar.scrollTo({ left: l, behavior: 'smooth' });
+        else if (r > bar.scrollLeft + bar.clientWidth) bar.scrollTo({ left: r - bar.clientWidth, behavior: 'smooth' });
       }
-      if (next) {
-        e.preventDefault();
-        next.scrollIntoView({ behavior: slow ? 'auto' : 'smooth', block: 'start' });
-      }
+      if (focus) tabs[i0].focus({ preventScroll: true });
+    }
+    tabs.forEach(function (t, k) {
+      t.addEventListener('click', function () { go(k); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(i0 + 1, true); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(i0 - 1, true); }
+      });
+    });
+    document.getElementById('rtPrev').addEventListener('click', function () { go(i0 - 1); });
+    document.getElementById('rtNext').addEventListener('click', function () { go(i0 + 1); });
+    panels.forEach(function (p) {
+      var b = p.querySelector('.rt-full'), q = p.querySelector('.rt-quote');
+      b.addEventListener('click', function () {
+        var o = q.classList.toggle('open'); b.setAttribute('aria-expanded', o);
+        b.textContent = o ? 'Згорнути' : 'Читати відгук повністю';
+      });
+    });
+    // свайп на телефоні
+    var x0 = null;
+    rt.querySelector('.rt-card').addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    rt.querySelector('.rt-card').addEventListener('touchend', function (e) {
+      if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 50) go(i0 + (dx < 0 ? 1 : -1));
+    });
+    go(0);
+    window.addEventListener('resize', function () { fitMore(panels[i0]); });
+  })();
+
+  /* ---------- Form ---------- */
+  var form = document.getElementById('leadForm'),
+      teamField = document.getElementById('teamField'),
+      box = document.getElementById('fMsgBox'),
+      btn = document.getElementById('fSubmit');
+
+  function setAudience(val){
+    form.querySelectorAll('input[name="audience"]').forEach(function(r){ r.checked = (r.value === val); });
+    teamField.hidden = (val !== 'Юридична компанія');
+  }
+  form.querySelectorAll('input[name="audience"]').forEach(function(r){
+    r.addEventListener('change', function(){ setAudience(r.value); });
+  });
+  document.querySelectorAll('[data-audience]').forEach(function(a){
+    a.addEventListener('click', function(){
+      setAudience(a.dataset.audience === 'solo' ? 'Власна практика' : 'Юридична компанія');
     });
   });
 
-  // Карусель відгуків: стрілки гортають на ширину картки
-  var revs = document.getElementById('revs');
-  if (revs) {
-    document.querySelectorAll('.rev-btn').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var card = revs.querySelector('.tg');
-        if (!card) return;
-        var step = card.getBoundingClientRect().width + 18;
-        revs.scrollBy({ left: step * Number(b.dataset.dir), behavior: slow ? 'auto' : 'smooth' });
-      });
+  function msg(type, text){ box.className = 'form-msg ' + type; box.textContent = text; box.hidden = false; }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = form.name.value.trim(), phone = form.phone.value.replace(/[^\d+]/g, '');
+    if(!name){ msg('err', 'Вкажіть, будь ласка, імʼя.'); form.name.focus(); return; }
+    if(phone.replace(/\D/g, '').length < 10){ msg('err', 'Перевірте номер телефону: потрібно щонайменше 10 цифр.'); form.phone.focus(); return; }
+
+    btn.disabled = true;
+    fetch(form.action, {method:'POST', body:new FormData(form)})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.ok){
+          try { sessionStorage.setItem('oix_lead_sent', '1'); } catch (_) {}
+          if (window.dataLayer) window.dataLayer.push({ event: 'lead_submit', form_name: 'main_form' });
+          msg('ok', 'Заявку отримано. Переходимо на сторінку підтвердження…');
+          form.reset(); setAudience('Юридична компанія'); calc();
+          setTimeout(function () { window.location.href = THANKS_URL; }, 400);
+        } else { throw new Error(); }
+      })
+      .catch(function(){
+        msg('err', 'Заявка не надіслалась. Напишіть нам у Telegram або Viber, посилання ліворуч.');
+      })
+      .then(function(){ btn.disabled = false; });
+  });
+  /* ---------- Кількість рішень у базі: міняти тут ---------- */
+  var DOCS_COUNT = 'понад 132 мільйони';
+  document.querySelectorAll('[data-docs]').forEach(function (el) { el.textContent = DOCS_COUNT; });
+
+  /* ---------- Відео YouTube / Vimeo: завантажується по кліку ---------- */
+  function embedUrl(url) {
+    if (!url) return '';
+    var m = url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+    if (m) return { src: 'https://www.youtube-nocookie.com/embed/' + m[1] + '?autoplay=1&rel=0&playsinline=1', thumb: 'https://i.ytimg.com/vi/' + m[1] + '/hqdefault.jpg' };
+    m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (m) return { src: 'https://player.vimeo.com/video/' + m[1] + '?autoplay=1', thumb: '' };
+    return '';
+  }
+  var vplayer = document.getElementById('vplayer'), vplay = document.getElementById('vplay');
+  if (vplayer && vplay) {
+    var v = embedUrl(vplayer.getAttribute('data-video').trim());
+    if (v && v.thumb) vplayer.style.backgroundImage = 'url(' + v.thumb + ')';
+    vplay.addEventListener('click', function () {
+      if (!v) return;
+      var f = document.createElement('iframe');
+      f.src = v.src;
+      f.title = 'Відео: що ми пропонуємо';
+      f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+      f.allowFullscreen = true;
+      vplayer.appendChild(f);
+      vplay.remove();
     });
   }
 
-  // Усередині переглядача артефактів сторінка живе у захищеній рамці, яка не
-  // пропускає mailto: і tel: — перехід ламає перегляд. Тому в рамці клік
-  // копіює адресу, а на власному домені посилання працюють як звичайно.
-  if (window.top !== window.self) {
-    document.querySelectorAll('a[href^="mailto:"], a[href^="tel:"]').forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        e.preventDefault();
-        var value = a.textContent.trim();
-        var original = value;
-        function flash(msg) {
-          a.textContent = msg;
-          setTimeout(function () { a.textContent = original; }, 1600);
-        }
-        function selectSelf() {
-          try {
-            var r = document.createRange();
-            r.selectNodeContents(a);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(r);
-          } catch (_) {}
-        }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(value).then(
-            function () { flash('Скопійовано'); },
-            function () { selectSelf(); flash('Натисніть Cmd+C'); }
-          );
-        } else {
-          selectSelf();
-          flash('Натисніть Cmd+C');
-        }
-      });
-      a.title = 'У режимі перегляду адреса копіюється. На сайті — відкриє пошту або дзвінок.';
+  /* ---------- Відео-бабл ---------- */
+  var vb = document.getElementById('vbubble'),
+      vbVideo = document.getElementById('vbubbleVideo'),
+      vbOpen = document.getElementById('vbubbleOpen'),
+      vbClose = document.getElementById('vbubbleClose'),
+      vbSound = document.getElementById('vbubbleSound');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vbDismissed = false;
+  try { vbDismissed = sessionStorage.getItem('vbubble-closed') === '1'; } catch (e) {}
+
+  if (vb && vbVideo && !vbDismissed) {
+    vbVideo.addEventListener('loadeddata', function () {
+      vb.classList.add('ready');
+      if (!reduceMotion) { var pr = vbVideo.play(); if (pr && pr.catch) pr.catch(function () {}); }
+    }, { once: true });
+
+    function openBubble() {
+      vb.classList.add('open');
+      if (!vb.classList.contains('ready')) return; // файлу ще немає — просто розгортаємо
+      vbVideo.muted = false;
+      vbVideo.loop = false;
+      vbVideo.currentTime = 0;
+      var pr = vbVideo.play();
+      if (pr && pr.catch) pr.catch(function () { vbVideo.muted = true; vbSound.hidden = false; vbVideo.play(); });
+      vbVideo.setAttribute('controls', '');
+      vbOpen.setAttribute('aria-label', 'Відеозвернення');
+    }
+    function shrinkBubble() {
+      vb.classList.remove('open');
+      vbVideo.removeAttribute('controls');
+      vbVideo.muted = true;
+      vbVideo.loop = true;
+      vbSound.hidden = true;
+      if (vb.classList.contains('ready') && !reduceMotion) { var pr2 = vbVideo.play(); if (pr2 && pr2.catch) pr2.catch(function () {}); } else { vbVideo.pause(); }
+      vbOpen.setAttribute('aria-label', 'Відкрити відеозвернення');
+    }
+    vbOpen.addEventListener('click', function () { if (!vb.classList.contains('open')) openBubble(); });
+    vbSound.addEventListener('click', function () { vbVideo.muted = false; vbSound.hidden = true; });
+    vbVideo.addEventListener('ended', function () { if (vb.classList.contains('open')) shrinkBubble(); });
+    vbClose.addEventListener('click', function () {
+      if (vb.classList.contains('open')) { shrinkBubble(); return; }
+      vbVideo.pause(); vb.hidden = true;
+      try { sessionStorage.setItem('vbubble-closed', '1'); } catch (e) {}
     });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && vb.classList.contains('open')) shrinkBubble(); });
   }
+  /* ---------- Дорожня карта: етапи по черзі ---------- */
+  (function () {
+    var rm = document.getElementById('rm'); if (!rm) return;
+    var steps = [].slice.call(rm.querySelectorAll('.rm-step')), bar = document.getElementById('rmBar');
+    var mq = window.matchMedia('(max-width:900px)'), reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cur = 0, timer = null, touched = false, visible = false;
+    function set(i) {
+      cur = i;
+      steps.forEach(function (s, j) { s.classList.toggle('on', j === i); s.classList.toggle('done', j < i); });
+      var q = steps.length > 1 ? i / (steps.length - 1) : 0;
+      if (mq.matches) { bar.style.width = ''; bar.style.height = (q * 100) + '%'; }
+      else { bar.style.height = ''; bar.style.width = (q * 100) + '%'; }
+    }
+    function stop() { touched = true; if (timer) { clearInterval(timer); timer = null; } }
+    steps.forEach(function (s, j) {
+      s.addEventListener('mouseenter', function () { stop(); set(j); });
+      s.addEventListener('focus', function () { stop(); set(j); });
+      s.addEventListener('click', function () { stop(); set(j); });
+    });
+    if (mq.addEventListener) mq.addEventListener('change', function () { set(cur); });
+    set(0);
+    if (reduce || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (e) {
+      visible = e[0].isIntersecting;
+      if (visible && !touched && !timer) {
+        timer = setInterval(function () { if (visible && !touched) set((cur + 1) % steps.length); }, 2600);
+      }
+    }, { threshold: 0.3 }).observe(rm);
+  })();
+
+  /* ---------- Де губиться час: закреслення і вибір ---------- */
+  (function () {
+    var bk = document.getElementById('bk'); if (!bk) return;
+    var rows = [].slice.call(bk.querySelectorAll('.bk-row'));
+    var sum = document.getElementById('painSum'), cnt = document.getElementById('painCount'),
+        txt = document.getElementById('painText'), hid = document.getElementById('hPains');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var touched = false, demo = null, di = 0, visible = false;
+    function setOn(r) { rows.forEach(function (x) { x.classList.toggle('on', x === r); }); }
+    function upd() {
+      var on = rows.filter(function (r) { return r.classList.contains('pin'); }).map(function (r) { return r.getAttribute('data-pain'); });
+      cnt.textContent = on.length + ' з ' + rows.length;
+      sum.classList.toggle('has', on.length > 0);
+      txt.textContent = on.length === 0 ? 'Натисніть на рішення, яке вам потрібне. З цього почнемо розбір.'
+        : on.length < 3 ? 'Почнемо розбір саме з цього. Перша година — безкоштовно.'
+        : 'Це кілька повʼязаних процесів. На розборі покажемо, з якого почати.';
+      if (hid) hid.value = on.join(', ');
+    }
+    function stopDemo() { touched = true; if (demo) { clearInterval(demo); demo = null; } }
+    rows.forEach(function (r) {
+      var btn = r.querySelector('.bk-r');
+      btn.addEventListener('mouseenter', function () { stopDemo(); setOn(r); });
+      btn.addEventListener('focus', function () { stopDemo(); setOn(r); });
+      btn.addEventListener('click', function () {
+        stopDemo();
+        var p = r.classList.toggle('pin');
+        btn.setAttribute('aria-pressed', p ? 'true' : 'false');
+        setOn(p ? r : null); upd();
+      });
+    });
+    bk.addEventListener('mouseleave', function () { if (touched) setOn(null); });
+    // автопоказ: поки людина не торкнулась блоку, рядки по черзі «виправляються»
+    var mobile = window.matchMedia('(max-width:900px)');
+    bk.addEventListener('sl:change', function (e) { if (mobile.matches) { stopDemo(); setOn(rows[e.detail]); } });
+    if (!reduce && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) {
+        visible = e[0].isIntersecting;
+        if (visible && !touched && !demo && !mobile.matches) {
+          setOn(rows[di]);
+          demo = setInterval(function () { if (!visible) return; di = (di + 1) % rows.length; setOn(rows[di]); }, 2400);
+        }
+      }, { threshold: 0.35 }).observe(bk);
+    }
+    document.querySelectorAll('.bk-more-b').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = document.getElementById(b.getAttribute('aria-controls')), o = t.classList.toggle('open');
+        b.setAttribute('aria-expanded', o); b.textContent = o ? 'Згорнути' : 'Читати далі';
+      });
+    });
+    upd();
+  })();
+
+  /* ---------- Поява блоків при прокрутці ---------- */
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var sel = ['.section .kicker', 'h2.section-title', '.section-sub', '.bk-row', '.bk-sum', '.bk-more', '.path', '.inc-col',
+      '.rm-step', '.rm-note', '.rm-rules li', '.decision', '.pg', '.pc', '.ts-top', '.ts-left', '.ts-cat', '.terms-note', '.conf', '.conf-strip', '.base-card', '.diff-card', '.product-how > div',
+      '.lx-stat', '.lx-card', '.lx-tool', '.lx-frame', '.rt-top', '.rt', '.faq details', '.faq-next', '.vplayer', '.of', '.demo-text', '.big-offer', '.form', '.channel'];
+    var els = document.querySelectorAll(sel.join(','));
+    // нормалізуємо довжину штрихів, щоб іконки «промальовувались»
+    document.querySelectorAll('.ic path,.ic circle,.ic ellipse,.ic rect,.ic line').forEach(function (e) { e.setAttribute('pathLength', '1'); });
+    var groups = new Map();
+    els.forEach(function (el) {
+      el.classList.add('reveal');
+      var k = el.parentElement; var i = groups.get(k) || 0; groups.set(k, i + 1);
+      el.style.setProperty('--d', Math.min(i, 6) * 0.08 + 's');
+    });
+    var principles = document.querySelector('.principles');
+    if (reduce || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('in'); }); if (principles) principles.classList.add('in'); return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
+    if (principles) io.observe(principles);
+  })();
+
+  /* ---------- Лічильники ---------- */
+  (function () {
+    var nums = document.querySelectorAll('[data-count]');
+    if (!nums.length || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    function run(el) {
+      var target = el.getAttribute('data-count'), parts = target.split('–').map(Number), t0 = null, D = 1400;
+      function f(ts) {
+        if (!t0) t0 = ts;
+        var k = Math.min((ts - t0) / D, 1); k = 1 - Math.pow(1 - k, 3);
+        el.textContent = parts.map(function (v) { return Math.round(v * k); }).join('–');
+        if (k < 1) requestAnimationFrame(f); else el.textContent = target;
+      }
+      requestAnimationFrame(f);
+    }
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (e) { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
+    }, { threshold: 0.6 });
+    nums.forEach(function (n) { io.observe(n); });
+  })();
+
+  /* ---------- Смуга прогресу прокрутки ---------- */
+  (function () {
+    var bar = document.getElementById('scrollProgress'); if (!bar) return;
+    var tick = false;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = 'scaleX(' + (h > 0 ? Math.min(window.scrollY / h, 1) : 0) + ')'; tick = false;
+    }
+    window.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+    upd();
+  })();
+  /* ---------- Попап «Стратегічна сесія» ---------- */
+  (function () {
+    var POPUP_DELAY = 120;          // секунд активного перегляду сторінки
+    var ov = document.getElementById('sessionPopup');
+    if (!ov) return;
+    var pForm = document.getElementById('popupForm'), pMsg = document.getElementById('pMsg'),
+        pBtn = document.getElementById('pSubmit'), pClose = document.getElementById('popupClose');
+    var test = /[?&]popup=1/.test(location.search);
+    var store = { get: function (k) { try { return sessionStorage.getItem(k); } catch (_) { return null; } },
+                  set: function (k, v) { try { sessionStorage.setItem(k, v); } catch (_) {} } };
+    var lastFocus = null, seconds = 0, timer = null;
+
+    function blocked() {
+      // не перебиваємо людину, яка вже заповнює основну форму
+      var a = document.activeElement;
+      if (a && a.closest && a.closest('#leadForm')) return true;
+      var c = document.getElementById('contact');
+      if (c) { var r = c.getBoundingClientRect(); if (r.top < innerHeight * 0.6 && r.bottom > innerHeight * 0.4) return true; }
+      return false;
+    }
+    function open() {
+      if (!test && (store.get('oix_popup_shown') || store.get('oix_lead_sent'))) return;
+      store.set('oix_popup_shown', '1');
+      var hp = document.getElementById('hPains'), pp = document.getElementById('pPains');
+      if (hp && pp) pp.value = hp.value;
+      lastFocus = document.activeElement;
+      ov.hidden = false; document.body.classList.add('popup-open');
+      requestAnimationFrame(function () { ov.classList.add('show'); });
+      setTimeout(function () { document.getElementById('pName').focus({ preventScroll: true }); }, 80);
+      if (window.dataLayer) window.dataLayer.push({ event: 'popup_shown', popup: 'strategy_session' });
+    }
+    function close() {
+      ov.classList.remove('show'); document.body.classList.remove('popup-open');
+      setTimeout(function () { ov.hidden = true; }, 300);
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    }
+    function tick() {
+      if (document.visibilityState !== 'visible') return;
+      seconds++;
+      if (seconds >= (test ? 3 : POPUP_DELAY) && !blocked()) { clearInterval(timer); open(); }
+    }
+    if (test || !(store.get('oix_popup_shown') || store.get('oix_lead_sent'))) timer = setInterval(tick, 1000);
+
+    pClose.addEventListener('click', close);
+    ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (ov.hidden) return;
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key === 'Tab') {                      // фокус не виходить за межі вікна
+        var f = ov.querySelectorAll('button,input:not([type=hidden]):not([tabindex="-1"]),a[href]');
+        f = [].filter.call(f, function (x) { return x.offsetParent !== null; });
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+
+    function show(type, text) { pMsg.className = 'form-msg ' + type; pMsg.textContent = text; pMsg.hidden = false; }
+    pForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = pForm.name.value.trim(), phone = pForm.phone.value.replace(/[^\d+]/g, '');
+      if (!name) { show('err', 'Вкажіть, будь ласка, імʼя.'); pForm.name.focus(); return; }
+      if (phone.replace(/\D/g, '').length < 10) { show('err', 'Перевірте номер телефону: потрібно щонайменше 10 цифр.'); pForm.phone.focus(); return; }
+      pBtn.disabled = true;
+      fetch(pForm.action, { method: 'POST', body: new FormData(pForm) })
+        .then(function (r) { return r.text().then(function (t) { var ok = r.ok; try { ok = JSON.parse(t).ok; } catch (_) {} if (!ok) throw new Error(); }); })
+        .then(function () {
+          store.set('oix_lead_sent', '1');
+          if (window.dataLayer) window.dataLayer.push({ event: 'lead_submit', form_name: 'popup_strategy_session' });
+          pForm.reset();
+          show('ok', 'Заявку отримано. Переходимо на сторінку підтвердження…');
+          setTimeout(function () { window.location.href = THANKS_URL; }, 400);
+        })
+        .catch(function () { show('err', 'Заявка не надіслалась. Напишіть нам у Telegram або зателефонуйте: +380 (98) 754-11-54.'); })
+        .then(function () { pBtn.disabled = false; });
+    });
+  })();
 })();
 </script>
 </body>
