@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заявку отримано — ORBITA IX</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A1725">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<style>
+:root{
+  --navy:#0A1725;--navy2:#0E1F31;--brass:#B08A34;--brass2:#8A6A22;--tint:#F6F2E9;--line:#E4DCCB;
+  --text:#0F1A2A;--muted:#545D6B;--muted2:#8A8578;--paper:#FFFDF8;--white:#FFFFFF;
+  --on-navy:#EDF2F9;--on-navy-2:#94A6BE;--grid:rgba(160,195,245,.10);
+  --serif:Georgia,'Iowan Old Style',Charter,'Times New Roman',serif;
+  --sans:system-ui,-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);line-height:1.55}
+a{color:inherit;text-decoration:none}
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.container{width:min(1120px,calc(100% - 32px));margin:0 auto}
+.kicker{display:flex;align-items:center;gap:12px;margin:0 0 16px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass2)}
+.kicker::before{content:"";width:38px;height:1px;background:var(--brass)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;max-width:100%;padding:15px 24px;border:1px solid var(--brass);border-radius:2px;background:var(--brass);color:var(--navy);font:700 15px/1.3 var(--sans);text-align:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.btn:hover{background:var(--brass2);border-color:var(--brass2);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--on-navy);border-color:rgba(237,242,249,.28)}
+.btn.ghost:hover{border-color:var(--brass);color:var(--brass);background:transparent}
+.btn svg{flex:0 0 auto}
+
+/* Шапка */
+.header{border-bottom:1px solid var(--line);background:var(--paper)}
+.header .container{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+.logo img{display:block;height:32px;width:auto}
+.back{font-size:14px;font-weight:600;color:var(--brass2);display:inline-flex;align-items:center;gap:8px}
+.back:hover{color:var(--navy)}
+
+/* Перший екран */
+.hero{background:var(--navy);color:var(--on-navy);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px}
+.hero .container{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:40px;align-items:center;padding:72px 0}
+.hero .kicker{color:var(--brass)}
+.hero h1{margin:0 0 18px;font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.6vw,52px);line-height:1.12;letter-spacing:-.01em;color:#fff;max-width:18ch}
+.hero-lead{margin:0 0 28px;font-size:18px;color:var(--on-navy-2);max-width:56ch}
+.hero-lead b{color:var(--on-navy);font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+.seal{justify-self:center;width:min(260px,100%)}
+.seal svg{display:block;width:100%;height:auto;overflow:visible}
+.seal .ring{fill:none;stroke:rgba(176,138,52,.35);stroke-width:1}
+.seal .arc{fill:none;stroke:var(--brass);stroke-width:2;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.4s .2s cubic-bezier(.3,.8,.2,1) forwards}
+.seal .tick{fill:none;stroke:var(--brass);stroke-width:3;stroke-linecap:square;stroke-dasharray:1;stroke-dashoffset:1;animation:draw .6s 1.3s ease-out forwards}
+.seal text{font-family:var(--mono);font-size:9px;letter-spacing:.3em;fill:var(--on-navy-2)}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* Секції */
+.section{padding:72px 0}
+.section.tint{background:var(--tint)}
+.section h2{margin:0 0 12px;font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.4vw,38px);line-height:1.18;color:var(--navy)}
+.section-sub{margin:0 0 34px;max-width:62ch;font-size:16.5px;color:var(--muted)}
+
+/* Кроки */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;position:relative}
+.steps::before{content:"";position:absolute;top:21px;left:10%;right:10%;height:2px;background:var(--line)}
+.steps::after{content:"";position:absolute;top:21px;left:10%;width:0;height:2px;background:var(--brass);animation:grow 1s .6s ease forwards}
+@keyframes grow{to{width:20%}}
+.step{position:relative;z-index:1;display:flex;flex-direction:column}
+.step-n{align-self:center;display:grid;place-items:center;width:44px;height:44px;margin-bottom:16px;border:1px solid var(--line);border-radius:2px;background:var(--paper);font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted2)}
+.step.done .step-n{background:var(--navy);border-color:var(--navy);color:var(--brass)}
+.step.next .step-n{border-color:var(--brass);color:var(--brass2)}
+.step-k{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2)}
+.step.done .step-k,.step.next .step-k{color:var(--brass2)}
+.step h3{margin:0 0 6px;font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.25;color:var(--navy)}
+.step p{margin:0;font-size:14px;color:var(--muted)}
+
+/* Підготовка */
+.prep{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.prep-list{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:q}
+.prep-list li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;align-items:start;padding:16px 18px;background:var(--white);border:1px solid var(--line);border-radius:4px;counter-increment:q;transition:border-color .25s}
+.prep-list li:hover{border-color:var(--brass)}
+.prep-list li::before{content:counter(q,decimal-leading-zero);display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:2px;background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--brass2)}
+.prep-list b{display:block;color:var(--navy);font-size:15.5px;margin-bottom:2px}
+.prep-list span{font-size:14px;color:var(--muted)}
+.case{display:flex;flex-direction:column;padding:28px;background:var(--navy);color:var(--on-navy-2);border-radius:4px;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px}
+.case .ic{width:48px;height:48px;padding:11px;border:1px solid rgba(176,138,52,.45);border-radius:2px;color:var(--brass);margin-bottom:18px}
+.case h3{margin:0 0 10px;font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.25;color:#fff}
+.case p{margin:0 0 14px;font-size:15px}
+.case .limit{margin-top:auto;padding-top:14px;border-top:1px solid rgba(237,242,249,.12);font-size:13.5px}
+
+/* Звʼязок */
+.contact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px 32px;align-items:center;padding:28px 32px;background:var(--white);border:1px solid var(--line);border-left:2px solid var(--brass);border-radius:4px}
+.contact h2{font-size:clamp(22px,2.6vw,28px);margin-bottom:6px}
+.contact p{margin:0;color:var(--muted)}
+.channels{display:flex;flex-wrap:wrap;gap:10px}
+.ch{display:inline-flex;align-items:center;gap:10px;padding:13px 18px;border:1px solid var(--line);border-radius:2px;background:var(--paper);font-weight:600;color:var(--navy);transition:border-color .2s,background .2s,color .2s}
+.ch:hover{border-color:var(--navy);background:var(--navy);color:var(--paper)}
+.ch .ic{width:20px;height:20px;color:var(--brass2)}
+.ch:hover .ic{color:var(--brass)}
+
+/* Підвал */
+.footer{background:var(--navy);color:var(--on-navy-2);padding:40px 0 26px;font-size:14px}
+.footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:flex-start}
+.footer-grid img{display:block;height:32px;width:auto;margin-bottom:12px}
+.footer-grid p{margin:0;max-width:420px}
+.footer-contacts{display:grid;gap:6px;text-align:right}
+.footer-contacts a{color:var(--on-navy)}
+.footer-contacts a:hover{color:var(--brass)}
+.footer-note{margin-top:26px;padding-top:18px;border-top:1px solid rgba(237,242,249,.12);font-size:12.5px}
+
+/* Поява */
+.js .rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+
+@media(max-width:900px){
+  .hero .container{grid-template-columns:minmax(0,1fr);padding:52px 0;gap:28px}
+  .seal{order:-1;justify-self:start;width:120px}
+  .seal text{display:none}
+  .steps{grid-template-columns:minmax(0,1fr);gap:20px}
+  .steps::before{left:21px;right:auto;top:22px;bottom:22px;width:2px;height:auto}
+  .steps::after{left:21px;top:22px;width:2px;height:0;animation:growv 1s .6s ease forwards}
+  @keyframes growv{to{height:20%}}
+  .step{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:16px}
+  .step-n{grid-row:1/span 3;align-self:start;margin:0}
+  .step > :not(.step-n){grid-column:2}
+  .prep{grid-template-columns:minmax(0,1fr)}
+  .contact{grid-template-columns:minmax(0,1fr);padding:22px}
+  .section{padding:56px 0}
+}
+@media(max-width:560px){
+  .back span{display:none}
+  .hero-actions .btn,.ch{flex:1 1 100%;justify-content:center}
+  .footer-contacts{text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .seal .arc,.seal .tick{stroke-dashoffset:0}
+  .steps::after{width:20%}
+  .js .rv{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:reduce) and (max-width:900px){.steps::after{width:2px;height:20%}}
+</style>
+<script>document.documentElement.className += ' js';</script>
+</head>
+<body>
+
+<header class="header">
+  <div class="container">
+    <a class="logo" href="index.html"><img src="img/orbita-ix-logo.png" alt="ORBITA IX" width="165" height="32"></a>
+    <a class="back" href="index.html"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg><span>Повернутися на сайт</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div>
+        <p class="kicker">Заявку отримано</p>
+        <h1>Дякуємо. Наступний крок за нами</h1>
+        <p class="hero-lead">Звʼяжемося з вами <b>того ж дня</b>, щоб узгодити час безкоштовної години розбору ваших процесів зі спеціалістом з AI-автоматизації.</p>
+        <div class="hero-actions">
+          <a class="btn" href="https://t.me/ai_legal_practice_bot?start=thanks" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 11 22 3l-6 18-4-7z"/><path d="M12 14 22 3"/></svg>
+            Написати в Telegram
+          </a>
+          <a class="btn ghost" href="index.html">Повернутися на сайт</a>
+        </div>
+      </div>
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <defs><path id="sealPath" d="M100 22a78 78 0 1 1 0 156a78 78 0 1 1 0-156"/></defs>
+          <circle class="ring" cx="100" cy="100" r="92"/>
+          <circle class="ring" cx="100" cy="100" r="62"/>
+          <circle class="arc" cx="100" cy="100" r="62" pathLength="1" transform="rotate(-90 100 100)"/>
+          <path class="tick" d="M78 101l15 15 30-32" pathLength="1"/>
+          <text><textPath href="#sealPath">ORBITA IX · ЗАЯВКА ПРИЙНЯТА · LEGAL AI ·</textPath></text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="kicker">Що буде далі</p>
+      <h2>Пʼять кроків від заявки до розрахунку</h2>
+      <p class="section-sub">Перший крок уже зроблено. Далі все відбувається у зручний для вас час.</p>
+      <ol class="steps">
+        <li class="step done rv"><span class="step-n" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><p class="step-k">Зроблено</p><h3>Заявку отримано</h3><p>Вона вже в нашій системі. Нічого більше заповнювати не потрібно.</p></li>
+        <li class="step next rv"><span class="step-n" aria-hidden="true">02</span><p class="step-k">Того ж дня</p><h3>Узгоджуємо час</h3><p>Телефонуємо або пишемо й пропонуємо кілька вікон на вибір.</p></li>
+        <li class="step rv"><span class="step-n" aria-hidden="true">03</span><p class="step-k">1 година</p><h3>Розбір процесів</h3><p>Проходимо ваші процеси від звернення клієнта до рахунку.</p></li>
+        <li class="step rv"><span class="step-n" aria-hidden="true">04</span><p class="step-k">Протягом дня</p><h3>Розрахунок</h3><p>Скільки годин забирає ручна робота і що автоматизувати першим.</p></li>
+        <li class="step rv"><span class="step-n" aria-hidden="true">05</span><p class="step-k">Без зобовʼязань</p><h3>Рішення за вами</h3><p>Розрахунок лишається у вас, навіть якщо нічого не замовите.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section tint">
+    <div class="container">
+      <p class="kicker">Як підготуватися</p>
+      <h2>Чотири питання, які ми поставимо на розборі</h2>
+      <p class="section-sub">Готуватися спеціально не потрібно. Але якщо подумаєте над цим заздалегідь, за годину встигнемо більше.</p>
+      <div class="prep">
+        <ol class="prep-list">
+          <li class="rv"><p><b>Які документи ви готуєте найчастіше?</b><span>І скільки часу забирає кожен: договір, ордер, позов, претензія.</span></p></li>
+          <li class="rv"><p><b>Як і де фіксуються процесуальні строки?</b><span>Календар, таблиця, CRM чи памʼять. І хто за них відповідає.</span></p></li>
+          <li class="rv"><p><b>Через які канали звертаються клієнти?</b><span>Месенджери, телефон, пошта, сайт. І скільки звернень стає справами.</span></p></li>
+          <li class="rv"><p><b>Якими системами ви вже користуєтесь?</b><span>CRM, таблиці, диски, облік часу. Автоматизуємо в тому, за що ви вже платите.</span></p></li>
+        </ol>
+        <div class="case rv">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 5h6a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H2z"/><path d="M11 8a3 3 0 0 1 3-3h7v6"/><circle cx="17" cy="15.5" r="3.2"/><path d="M19.4 17.9 22 20.5"/></svg>
+          <h3>Візьміть справу, яку ви вже вели</h3>
+          <p>На розборі покажемо Legal AI в роботі. Опишіть фабулу справи, практику до якої ви вже шукали, і порівняйте добірку системи з тим, що знайшли самі.</p>
+          <p class="limit">Дані справи анонімізуються перед обробкою. Імена й реквізити сторін можна не називати.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact rv">
+        <div>
+          <h2>Не хочете чекати дзвінка?</h2>
+          <p>Напишіть нам першими, і узгодимо час розбору одразу в переписці.</p>
+        </div>
+        <div class="channels">
+          <a class="ch" href="https://t.me/ai_legal_practice_bot?start=thanks" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 11 22 3l-6 18-4-7z"/><path d="M12 14 22 3"/></svg>Telegram</a>
+          <a class="ch" href="viber://chat?number=%2B380987541154"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M3 4h18v13H9l-5 4v-4H3z"/><path d="M8 9h8M8 12h5"/></svg>Viber</a>
+          <a class="ch" href="tel:+380987541154"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>+380 (98) 754-11-54</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <img src="img/orbita-ix-logo-inverse.png" alt="ORBITA IX" width="165" height="32">
+      <p>Автоматизація юридичних бізнес-процесів. Legal AI від ORBITA IX.</p>
+    </div>
+    <div class="footer-contacts">
+      <a href="tel:+380987541154">+380 (98) 754-11-54</a>
+      <a href="mailto:ai.legal.xv@gmail.com">ai.legal.xv@gmail.com</a>
+      <a href="https://orbita-ix.com/" target="_blank" rel="noopener">orbita-ix.com</a>
+    </div>
+  </div>
+  <div class="container footer-note">© 2026 ORBITA IX. Вартість і строки розраховуються індивідуально після безкоштовного розбору процесів.</div>
+</footer>
+
+<script>
+(function () {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: 'thank_you_view', page_type: 'thanks' });
+  var els = document.querySelectorAll('.rv');
+  var groups = new Map();
+  els.forEach(function (el) { var p = el.parentElement, i = groups.get(p) || 0; groups.set(p, i + 1); el.style.setProperty('--d', Math.min(i, 5) * 0.08 + 's'); });
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('in'); }); return;
+  }
+  var io = new IntersectionObserver(function (en) {
+    en.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>
