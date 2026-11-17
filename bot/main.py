@@ -174,10 +174,11 @@ def handle(msg):
 
 # ---------- Заявки з форми сайту (раніше send.php, якому на GitHub Pages ніде виконуватись) ----------
 
-SITE_ORIGINS = {"https://orbita-ix.com", "https://www.orbita-ix.com"}
+SITE_ORIGINS = {"https://orbita-ix.com", "https://www.orbita-ix.com", "https://legal-ai.orbita-ix.com"}
 LEAD_FIELDS = [  # поле форми -> підпис у повідомленні (як у send.php)
     ("audience", "Хто"),
     ("name", "Ім'я"),
+    ("firm", "Фірма"),
     ("phone", "Телефон"),
     ("team_size", "Юристів у команді"),
     ("message", "Задача"),
@@ -228,7 +229,9 @@ def site_lead():
         return with_cors(jsonify(ok=False)), 422
     h = html.escape
     lines = [f"{label}: <b>{h(values[k])}</b>" for k, label in LEAD_FIELDS if values[k]]
-    text = "🔔 <b>Заявка з форми сайту</b>\n\n" + "\n".join(lines) + f"\n🕒 {now()}"
+    title = ("Заявка з сайту Legal AI" if "legal-ai." in request.headers.get("Origin", "")
+             else "Заявка з форми сайту")
+    text = f"🔔 <b>{title}</b>\n\n" + "\n".join(lines) + f"\n🕒 {now()}"
     ok = notify(text)
     return with_cors(jsonify(ok=ok)), (200 if ok else 502)
 
