@@ -889,7 +889,7 @@ src="https://www.facebook.com/tr?id=1553402640140650&ev=PageView&noscript=1"
   <button type="button" class="vbubble-sound" id="vbubbleSound" aria-label="Увімкнути звук" hidden>Увімкнути звук</button>
 </div>
 
-<!-- ПОПАП: стратегічна сесія. Зʼявляється через 2 хв активного перегляду, один раз за сесію браузера.
+<!-- ПОПАП: стратегічна сесія. Зʼявляється через 40 с активного перегляду, один раз за сесію браузера.
      Не показується, якщо людина вже залишила заявку. Тест: додати ?popup=1 до адреси сторінки (зʼявиться через 3 с). -->
 <div class="popup-overlay" id="sessionPopup" hidden>
   <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
@@ -1429,7 +1429,7 @@ src="https://www.facebook.com/tr?id=1553402640140650&ev=PageView&noscript=1"
   })();
   /* ---------- Попап «Стратегічна сесія» ---------- */
   (function () {
-    var POPUP_DELAY = 120;          // секунд активного перегляду сторінки
+    var POPUP_DELAY = 40;           // секунд активного перегляду сторінки
     var ov = document.getElementById('sessionPopup');
     if (!ov) return;
     var pForm = document.getElementById('popupForm'), pMsg = document.getElementById('pMsg'),
